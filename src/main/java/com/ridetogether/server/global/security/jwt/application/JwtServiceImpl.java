@@ -42,12 +42,11 @@ public class JwtServiceImpl implements JwtService {
 	private static final String BEARER = "Bearer ";
 
 	//== 메서드 ==//
-	@Transactional
 	@Override
-	public JwtToken createJwtToken(String username, String password) {
+	public JwtToken createJwtToken(String memberId, String password) {
 		// 1. username + password 를 기반으로 Authentication 객체 생성
 		// 이때 authentication 은 인증 여부를 확인하는 authenticated 값이 false
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberId, password);
 
 		// 2. 실제 검증. authenticate() 메서드를 통해 요청된 Member 에 대한 검증 진행
 		// authenticate 메서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드 실행
@@ -55,6 +54,25 @@ public class JwtServiceImpl implements JwtService {
 
 		// 3. 인증 정보를 기반으로 JWT 토큰 생성
 		return jwtTokenProvider.createToken(authentication);
+	}
+
+
+	@Transactional
+	@Override
+	public JwtToken createJwtToken(Authentication authentication) {
+		return jwtTokenProvider.createToken(authentication);
+	}
+
+	@Override
+	public String reIssueAccessToken(String memberId, String password) {
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberId, password);
+		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+		return jwtTokenProvider.createAccessToken(authentication);
+	}
+
+	@Override
+	public String reIssueRefreshToken(String memberId, String password) {
+		return jwtTokenProvider.createRefreshToken();
 	}
 
 	@Override
@@ -79,16 +97,16 @@ public class JwtServiceImpl implements JwtService {
 	public void sendAccessAndRefreshToken(HttpServletResponse response, JwtToken jwtToken) {
 		response.setStatus(HttpServletResponse.SC_OK);
 
-		setAccessTokenHeader(response, jwtToken);
-		setRefreshTokenHeader(response, jwtToken);
+		setAccessTokenHeader(response, jwtToken.getAccessToken());
+		setRefreshTokenHeader(response, jwtToken.getRefreshToken());
 
 	}
 
 	@Override
-	public void sendAccessToken(HttpServletResponse response, JwtToken jwtToken) {
+	public void sendAccessToken(HttpServletResponse response, String accessToken) {
 		response.setStatus(HttpServletResponse.SC_OK);
 
-		setAccessTokenHeader(response, jwtToken);
+		setAccessTokenHeader(response, accessToken);
 	}
 
 	@Override
@@ -106,20 +124,20 @@ public class JwtServiceImpl implements JwtService {
 	}
 
 	@Override
-	public String extractMemberId(String accessToken) {
+	public Optional<String> extractMemberId(String accessToken) {
 		Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
 		CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-		return customUserDetails.getMemberId();
+		return Optional.ofNullable(customUserDetails.getMemberId());
 	}
 
 	@Override
-	public void setAccessTokenHeader(HttpServletResponse response, JwtToken jwtToken) {
-		response.setHeader(accessHeader, jwtToken.getAccessToken());
+	public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
+		response.setHeader(accessHeader, accessToken);
 	}
 
 	@Override
-	public void setRefreshTokenHeader(HttpServletResponse response, JwtToken jwtToken) {
-		response.setHeader(refreshHeader, jwtToken.getRefreshToken());
+	public void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
+		response.setHeader(refreshHeader, refreshToken);
 	}
 
 	@Override
