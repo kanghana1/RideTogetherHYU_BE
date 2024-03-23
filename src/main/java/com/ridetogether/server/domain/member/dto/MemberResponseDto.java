@@ -13,4 +13,23 @@ public class MemberResponseDto {
 		private Boolean isSuccess;
 	}
 
+	@Data
+	@Builder
+	public static class MemberInfoResponseDto{
+		private Long idx;
+		private String memberId;
+		private String name;
+		private String nickName;
+		private String email;
+		private String gender;
+		private String profileImgUrl;
+		private String account;
+		private String accountBank;
+		private String kakaoPayUrl;
+		private String kakaoQrImageUrl;
+
+	}
+
+
+
 }

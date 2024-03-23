@@ -2,15 +2,17 @@ package com.ridetogether.server.domain.member.application;
 
 import static com.ridetogether.server.global.config.SecurityConfig.passwordEncoder;
 
+import com.ridetogether.server.domain.member.converter.MemberDtoConverter;
 import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.domain.member.dto.MemberDto.MemberSignupDto;
-import com.ridetogether.server.domain.member.dto.MemberRequestDto.LoginMemberRequestDto;
+import com.ridetogether.server.domain.member.dto.MemberResponseDto.MemberInfoResponseDto;
+import com.ridetogether.server.domain.model.ActiveState;
+import com.ridetogether.server.domain.model.StudentStatus;
 import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
 import com.ridetogether.server.global.apiPayload.exception.handler.MemberHandler;
-import com.ridetogether.server.global.security.jwt.JwtToken;
-import com.ridetogether.server.global.security.jwt.application.JwtService;
-import java.util.Optional;
+import com.ridetogether.server.global.security.application.JwtService;
+import com.ridetogether.server.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,8 +27,15 @@ public class MemberService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtService jwtService;
 
-	public Long singUp(MemberSignupDto memberSignupDto) throws Exception {
+	private static final String HANYANG_EMAIL = "@hanyang.ac.kr";
 
+	public Long singUp(MemberSignupDto memberSignupDto) throws Exception {
+		if (isExistByEmail(memberSignupDto.getEmail())) {
+			throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_ALREADY_EXIST);
+		}
+		if (isExistByNickName(memberSignupDto.getNickName())) {
+			throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_ALREADY_EXIST);
+		}
 		Member member = Member.builder()
 				.memberId(memberSignupDto.getMemberId())
 				.password(passwordEncoder().encode(memberSignupDto.getPassword()))
@@ -39,15 +48,26 @@ public class MemberService {
 				.account(memberSignupDto.getAccount())
 				.accountBank(memberSignupDto.getAccountBank())
 				.role(memberSignupDto.getRole())
+				.activeState(ActiveState.ACTIVE)
+				.studentStatus(StudentStatus.NOT_STUDENT)
 				.build();
+
+		member.setStudentStatus(member.getMemberId());
 
 		return memberRepository.save(member).getIdx();
 	}
 
-//	public JwtToken login(LoginMemberRequestDto requestDto) {
-//		Member member = memberRepository.findByMemberId(requestDto.getMemberId())
-//				.orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-//		return jwtService.createJwtToken(requestDto.getMemberId(), requestDto.getPassword());
-//	}
+	public MemberInfoResponseDto getMyInfo() {
+		Member member = SecurityUtil.getLoginMember().orElseThrow(() -> new MemberHandler(ErrorStatus._UNAUTHORIZED));
+		return MemberDtoConverter.convertMemberToInfoResponseDto(member);
+	}
+
+	public boolean isExistByEmail(String email) {
+		return memberRepository.existsByEmail(email);
+	}
+
+	public boolean isExistByNickName(String nickName) {
+		return memberRepository.existsByNickName(nickName);
+	}
 
 }

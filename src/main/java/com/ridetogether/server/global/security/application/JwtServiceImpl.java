@@ -1,10 +1,10 @@
-package com.ridetogether.server.global.security.jwt.application;
+package com.ridetogether.server.global.security.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
-import com.ridetogether.server.global.security.jwt.JwtToken;
-import com.ridetogether.server.global.security.jwt.JwtTokenProvider;
+import com.ridetogether.server.global.security.domain.JwtToken;
+import com.ridetogether.server.global.security.domain.JwtTokenProvider;
 import com.ridetogether.server.global.security.domain.CustomUserDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -126,8 +128,8 @@ public class JwtServiceImpl implements JwtService {
 	@Override
 	public Optional<String> extractMemberId(String accessToken) {
 		Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
-		CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-		return Optional.ofNullable(customUserDetails.getMemberId());
+		CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+		return Optional.ofNullable(user.getUsername());
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.ridetogether.server.global.security.jwt;
+package com.ridetogether.server.global.security.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

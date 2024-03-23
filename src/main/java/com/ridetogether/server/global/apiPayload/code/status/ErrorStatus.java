@@ -14,15 +14,17 @@ public enum ErrorStatus implements BaseErrorCode {
     _INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON500", "서버 에러, 관리자에게 문의 바랍니다."),
     _BAD_REQUEST(HttpStatus.BAD_REQUEST, "COMMON400", "잘못된 요청입니다."),
     _UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "COMMON401", "인증이 필요합니다."),
-    _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
+    _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "접근 권한이 없는 요청입니다."),
     _LOGIN_FAILURE(HttpStatus.BAD_REQUEST, "COMMON400", "Login Fail"),
 
     //유저 응답
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "유저가 존재하지 않습니다."),
-    MEMBER_PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "MEMBER4002", "비밀번호가 일치하지 않습니다."),
-    MEMBER_NOT_PUBLIC(HttpStatus.BAD_REQUEST, "MEMBER4003", "친구 요청을 보내려는 상대가 비공개 상태입니다."),
-    MEMBER_NOT_TOKEN(HttpStatus.BAD_REQUEST, "MEMBER4004", "서버에 저장된 해당 유저의 FirebaseToken이 존재하지 않습니다."),
-    NOT_MATCHING_MEMBER_TOKEN(HttpStatus.BAD_REQUEST, "MEMBER4005", "토큰과 로그인 된 멤버가 일치하지 않습니다."),
+    MEMBER_EMAIL_PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "MEMBER4002", "이메일 또는 비밀번호가 일치하지 않습니다."),
+    MEMBER_EMAIL_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "MEMBER4003", "중복된 이메일입니다."),
+    MEMBER_NICKNAME_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "MEMBER4004", "중복된 닉네임입니다."),
+    MEMBER_STATE_INACTIVE(HttpStatus.BAD_REQUEST, "MEMBER4005", "휴면상태의 유저입니다."),
+    MEMBER_STATE_NOT_STUDENT(HttpStatus.BAD_REQUEST, "MEMBER4006", "한양대학교 학생 인증이 미완료된 사용자입니다."),
+    MEMBER_STATE_NOT_ADMIN(HttpStatus.FORBIDDEN, "MEMBER4007", "접근 권한이 없습니다"),
 
     //앨범 응답
     ALBUM_NOT_FOUND(HttpStatus.BAD_REQUEST, "ALBUM4001", "앨범이 존재하지 않습니다."),

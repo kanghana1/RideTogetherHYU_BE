@@ -3,7 +3,7 @@ package com.ridetogether.server.global.security.filter;
 import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.global.security.domain.CustomUserDetails;
-import com.ridetogether.server.global.security.jwt.application.JwtService;
+import com.ridetogether.server.global.security.application.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

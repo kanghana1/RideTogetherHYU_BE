@@ -1,6 +1,11 @@
-package com.ridetogether.server.global.security.jwt;
+package com.ridetogether.server.global.security.domain;
 
+import com.ridetogether.server.domain.member.dao.MemberRepository;
+import com.ridetogether.server.domain.member.domain.Member;
+import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
+import com.ridetogether.server.global.apiPayload.exception.handler.MemberHandler;
 import com.ridetogether.server.global.security.domain.CustomUserDetails;
+import com.ridetogether.server.global.security.domain.JwtToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -15,6 +20,7 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +29,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -41,6 +46,7 @@ public class JwtTokenProvider {
 	private String secret;
 
 	private static final String MEMBER_ID_CLAIM = "memberId";
+	private final MemberRepository memberRepository;
 
 	private Key key;
 
@@ -101,6 +107,9 @@ public class JwtTokenProvider {
 		if (claims.get("auth") == null) {
 			throw new RuntimeException("권한 정보가 없는 토큰입니다.");
 		}
+		if (claims.get("memberId") == null) {
+			throw new RuntimeException("유저 정보가 없는 토큰입니다.");
+		}
 
 		// 클레임에서 권한 정보 가져오기
 		Collection<? extends GrantedAuthority> authorities = Arrays.stream(claims.get("auth").toString().split(","))
@@ -109,7 +118,10 @@ public class JwtTokenProvider {
 
 		// UserDetails 객체를 만들어서 Authentication return
 		// UserDetails: interface, User: UserDetails를 구현한 class
-		UserDetails principal = new User(claims.getSubject(), "", authorities);
+		String memberId = (String) claims.get("memberId");
+		Member member = memberRepository.findByMemberId(memberId)
+				.orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+		UserDetails principal = new CustomUserDetails(member);
 		return new UsernamePasswordAuthenticationToken(principal, "", authorities);
 	}
 
