@@ -8,7 +8,7 @@ public class MemberResponseDto {
 	@Data
 	@Builder
 	public static class SignupResponseDto{
-		private Long id;
+		private Long idx;
 		private String nickName;
 		private Boolean isSuccess;
 	}

@@ -2,12 +2,11 @@ package com.ridetogether.server.domain.member.dto;
 
 import com.ridetogether.server.domain.model.Bank;
 import com.ridetogether.server.domain.model.Gender;
-import java.util.Optional;
+import com.ridetogether.server.domain.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 public class MemberDto {
 
@@ -26,7 +25,8 @@ public class MemberDto {
 		private String kakaoQrImageUrl;
 		private String account;
 		private Bank accountBank;
-		private Optional<MultipartFile> profileImgUrl;
+		private Role role;
 	}
+
 
 }

@@ -1,5 +1,6 @@
 package com.ridetogether.server.global.security.jwt;
 
+import com.ridetogether.server.global.security.domain.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -22,6 +23,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -32,7 +34,7 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProvider {
 
 	@Value("${jwt.access.expiration_minute}")
-	private long ACCESS_TOKEN_EXPIRE_MINUTE ; // 30min
+	private long ACCESS_TOKEN_EXPIRE_MINUTE ;
 	@Value("${jwt.refresh.expiration_hour}")
 	private long REFRESH_TOKEN_EXPIRE_MINUTE;
 	@Value("${jwt.secret}")
@@ -49,34 +51,46 @@ public class JwtTokenProvider {
 	}
 
 	public JwtToken createToken(Authentication authentication) {
-
-		String authorities = authentication.getAuthorities().stream()
-				.map(GrantedAuthority::getAuthority)
-				.collect(Collectors.joining(","));
-
-		Date now = new Date();
-		Date accessTokenExpiration = new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_MINUTE * 60 * 1000);
-		Date refreshTokenExpiration = new Date(now.getTime() + REFRESH_TOKEN_EXPIRE_MINUTE * 60 * 60 * 1000);
-
-
-		String accessToken = Jwts.builder()
-				.setSubject(authentication.getName())
-				.claim("auth", authorities)
-				.setIssuedAt(now)
-				.setExpiration(accessTokenExpiration)
-				.signWith(key, SignatureAlgorithm.HS512)
-				.compact();
-		String refreshToken = Jwts.builder()
-				.setIssuedAt(now)
-				.setExpiration(refreshTokenExpiration)
-				.signWith(key, SignatureAlgorithm.HS512)
-				.compact();
+		String accessToken = createAccessToken(authentication);
+		String refreshToken = createRefreshToken();
 
 		return JwtToken.builder()
 				.grantType("Bearer")
 				.accessToken(accessToken)
 				.refreshToken(refreshToken)
 				.build();
+	}
+
+	public String createRefreshToken() {
+		Date now = new Date();
+		Date refreshTokenExpiration = new Date(now.getTime() + REFRESH_TOKEN_EXPIRE_MINUTE * 60 * 60 * 1000);
+
+		return Jwts.builder()
+				.setIssuedAt(now)
+				.setExpiration(refreshTokenExpiration)
+				.signWith(key, SignatureAlgorithm.HS512)
+				.compact();
+	}
+
+	public String createAccessToken(Authentication authentication) {
+		String authorities = authentication.getAuthorities().stream()
+				.map(GrantedAuthority::getAuthority)
+				.collect(Collectors.joining(","));
+
+		log.info(authorities);
+		Date now = new Date();
+		Date accessTokenExpiration = new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_MINUTE * 60 * 1000);
+
+		CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+
+		return Jwts.builder()
+				.setSubject(authentication.getName())
+				.claim("auth", authorities)
+				.claim("memberId", user.getMemberId())
+				.setIssuedAt(now)
+				.setExpiration(accessTokenExpiration)
+				.signWith(key, SignatureAlgorithm.HS512)
+				.compact();
 	}
 
 	// Jwt 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드

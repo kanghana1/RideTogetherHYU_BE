@@ -17,11 +17,11 @@ import org.springframework.util.StreamUtils;
 
 public class JsonUsernamePasswordAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-	private static final String DEFAULT_LOGIN_REQUEST_URL = "/login";  // /login/oauth2/ + ????? 로 오는 요청을 처리할 것이다
+	private static final String DEFAULT_LOGIN_REQUEST_URL = "/api/member/login";  // /login/oauth2/ + ????? 로 오는 요청을 처리할 것이다
 	private static final String HTTP_METHOD = "POST";    //HTTP 메서드의 방식은 POST 이다.
 	private static final String CONTENT_TYPE = "application/json";//json 타입의 데이터로만 로그인을 진행한다.
 	private final ObjectMapper objectMapper;
-	private static final String USERNAME_KEY="email";
+	private static final String MEMBER_ID_KEY="memberId";
 	private static final String PASSWORD_KEY="password";
 
 	private static final AntPathRequestMatcher DEFAULT_LOGIN_PATH_REQUEST_MATCHER =
@@ -44,10 +44,10 @@ public class JsonUsernamePasswordAuthenticationFilter extends AbstractAuthentica
 
 		Map<String, String> usernamePasswordMap = objectMapper.readValue(messageBody, Map.class);
 
-		String username = usernamePasswordMap.get(USERNAME_KEY);
+		String memberId = usernamePasswordMap.get(MEMBER_ID_KEY);
 		String password = usernamePasswordMap.get(PASSWORD_KEY);
 
-		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);//principal 과 credentials 전달
+		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(memberId, password);//principal 과 credentials 전달
 
 		return this.getAuthenticationManager().authenticate(authRequest);
 	}

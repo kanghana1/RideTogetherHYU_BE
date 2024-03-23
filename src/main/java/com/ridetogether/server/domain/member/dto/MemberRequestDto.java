@@ -24,6 +24,14 @@ public class MemberRequestDto {
 		private String kakaoQrImageUrl;
 		private String account;
 		private String accountBank;
-		private Optional<MultipartFile> profileImgUrl;
+	}
+
+	@Builder
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class LoginMemberRequestDto {
+		private String memberId;
+		private String password;
 	}
 }
