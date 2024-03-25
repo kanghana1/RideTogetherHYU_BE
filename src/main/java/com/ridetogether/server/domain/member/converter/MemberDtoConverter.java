@@ -39,6 +39,7 @@ public class MemberDtoConverter {
 				.kakaoQrImageUrl(member.getKakaoQrImageUrl())
 				.account(member.getAccount())
 				.accountBank(member.getAccountBank().getTitle())
+				.studentStatus(member.getStudentStatus().toString())
 				.build();
 	}
 }
