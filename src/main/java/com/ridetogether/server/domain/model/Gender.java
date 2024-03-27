@@ -8,4 +8,5 @@ public enum Gender {
 	public static Gender fromName(String type) {
 		return Gender.valueOf(type.toUpperCase(ENGLISH));
 	}
+
 }

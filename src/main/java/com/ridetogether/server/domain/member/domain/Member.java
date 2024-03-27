@@ -85,6 +85,14 @@ public class Member extends BaseTimeEntity {
 		this.refreshToken = null;
 	}
 
+	public void setStudentStatus(String memberId) {
+		if (memberId.contains("@hanyang.ac.kr")) {
+			this.studentStatus = StudentStatus.STUDENT;
+		} else {
+			this.studentStatus = StudentStatus.NOT_STUDENT;
+		}
+	}
+
 	public boolean isStudent() {
 		return this.role == Role.STUDENT;
 	}

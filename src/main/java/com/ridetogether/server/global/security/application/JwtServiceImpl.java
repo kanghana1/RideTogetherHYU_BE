@@ -1,10 +1,11 @@
-package com.ridetogether.server.global.security.jwt.application;
+package com.ridetogether.server.global.security.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
-import com.ridetogether.server.global.security.jwt.JwtToken;
-import com.ridetogether.server.global.security.jwt.JwtTokenProvider;
+import com.ridetogether.server.global.apiPayload.exception.GeneralException;
+import com.ridetogether.server.global.security.domain.JwtToken;
+import com.ridetogether.server.global.security.domain.JwtTokenProvider;
 import com.ridetogether.server.global.security.domain.CustomUserDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -37,8 +38,6 @@ public class JwtServiceImpl implements JwtService {
 	@Value("${jwt.refresh.header}")
 	private String refreshHeader;
 
-	private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
-	private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
 	private static final String BEARER = "Bearer ";
 
 	//== 메서드 ==//
@@ -56,8 +55,6 @@ public class JwtServiceImpl implements JwtService {
 		return jwtTokenProvider.createToken(authentication);
 	}
 
-
-	@Transactional
 	@Override
 	public JwtToken createJwtToken(Authentication authentication) {
 		return jwtTokenProvider.createToken(authentication);
@@ -126,8 +123,8 @@ public class JwtServiceImpl implements JwtService {
 	@Override
 	public Optional<String> extractMemberId(String accessToken) {
 		Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
-		CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-		return Optional.ofNullable(customUserDetails.getMemberId());
+		CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+		return Optional.ofNullable(user.getUsername());
 	}
 
 	@Override

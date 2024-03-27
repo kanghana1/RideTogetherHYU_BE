@@ -13,7 +13,7 @@ public class ReasonDTO {
     private final String code;
     private final String message;
 
-    public Boolean getIsSuccess(){
+    public Boolean isSuccess(){
         return isSuccess;
     }
 }

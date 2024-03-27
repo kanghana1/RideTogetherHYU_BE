@@ -1,6 +1,6 @@
-package com.ridetogether.server.global.security.jwt.application;
+package com.ridetogether.server.global.security.application;
 
-import com.ridetogether.server.global.security.jwt.JwtToken;
+import com.ridetogether.server.global.security.domain.JwtToken;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;

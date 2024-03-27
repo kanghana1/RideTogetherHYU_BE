@@ -1,16 +1,14 @@
 package com.ridetogether.server.global.util;
 
+import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.global.security.domain.CustomUserDetails;
-import org.springframework.security.core.Authentication;
+import java.util.Optional;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class SecurityUtil {
-	public static String getLoginEmail(){
+	public static Optional<Member> getLoginMember(){
 		CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		return user.getMember().getEmail();
+		return Optional.ofNullable(user.getMember());
 	}
 
-	public static Authentication getAuthentication() {
-		return SecurityContextHolder.getContext().getAuthentication();
-	}
 }
