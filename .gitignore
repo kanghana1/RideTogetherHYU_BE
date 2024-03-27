@@ -41,3 +41,4 @@ application-aws.yml
 application-jwt.yml
 application-oauth.yml
 SecurityConfig.java
+Wallet_RideTogetherDB.zip

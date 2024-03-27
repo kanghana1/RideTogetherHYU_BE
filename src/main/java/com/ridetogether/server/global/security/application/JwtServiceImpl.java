@@ -55,8 +55,6 @@ public class JwtServiceImpl implements JwtService {
 		return jwtTokenProvider.createToken(authentication);
 	}
 
-
-	@Transactional
 	@Override
 	public JwtToken createJwtToken(Authentication authentication) {
 		return jwtTokenProvider.createToken(authentication);

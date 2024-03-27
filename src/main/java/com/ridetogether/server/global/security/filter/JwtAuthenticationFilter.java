@@ -5,7 +5,6 @@ import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.global.apiPayload.ApiResponse;
 import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
-import com.ridetogether.server.global.apiPayload.exception.handler.MemberHandler;
 import com.ridetogether.server.global.security.domain.CustomUserDetails;
 import com.ridetogether.server.global.security.application.JwtService;
 import jakarta.servlet.FilterChain;
@@ -30,9 +29,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtService jwtService;
 	private final MemberRepository memberRepository;
-	private ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
-	private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();//5
+	private final GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();//5
 
 	private final String NO_CHECK_URL = "/api/member/login";//1
 
