@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +21,10 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); //401 인증 실패
-		response.getWriter().write(objectMapper.writeValueAsString(ApiResponse.onFailure(ErrorStatus._LOGIN_FAILURE.getCode(),
-				ErrorStatus._LOGIN_FAILURE.getMessage(), exception.getMessage())));
+		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+		response.setStatus(ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getHttpStatus().value());
+		response.getWriter().write(objectMapper.writeValueAsString(ApiResponse.onFailure(ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getCode(),
+				ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getMessage(), exception.getMessage())));
 		log.info("Authentication failed: " + exception.getMessage());
 	}
 }

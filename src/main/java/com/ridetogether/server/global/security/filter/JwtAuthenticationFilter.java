@@ -1,7 +1,11 @@
 package com.ridetogether.server.global.security.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
+import com.ridetogether.server.global.apiPayload.ApiResponse;
+import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
+import com.ridetogether.server.global.apiPayload.exception.handler.MemberHandler;
 import com.ridetogether.server.global.security.domain.CustomUserDetails;
 import com.ridetogether.server.global.security.application.JwtService;
 import jakarta.servlet.FilterChain;
@@ -9,6 +13,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,10 +30,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtService jwtService;
 	private final MemberRepository memberRepository;
+	private ObjectMapper objectMapper = new ObjectMapper();
 
 	private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();//5
 
-	private final String NO_CHECK_URL = "/login";//1
+	private final String NO_CHECK_URL = "/api/member/login";//1
 
 	/**
 	 * 1. 리프레시 토큰이 오는 경우 -> 유효하면 AccessToken 재발급후, 필터 진행 X, 바로 튕기기
@@ -57,19 +63,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	}
 
 	private void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-		jwtService.extractAccessToken(request).filter(jwtService::isTokenValid).ifPresent(
-
-				accessToken -> jwtService.extractMemberId(accessToken).ifPresent(
-
-						memberId -> memberRepository.findByMemberId(memberId).ifPresent(
-								this::saveAuthentication
-						)
-				)
-		);
-
-		filterChain.doFilter(request,response);
+		try {
+			jwtService.extractAccessToken(request).filter(jwtService::isTokenValid).flatMap(jwtService::extractMemberId)
+					.flatMap(memberRepository::findByMemberId).ifPresent(this::saveAuthentication);
+			filterChain.doFilter(request, response);
+		} catch (NullPointerException e) {
+			response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+			response.setStatus(ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getHttpStatus().value());
+			response.getWriter().write(objectMapper.writeValueAsString(ApiResponse.onFailure(ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getCode(),
+					ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getMessage(), e.getMessage())));
+			log.info("Authentication failed: " + e.getClass().toString() + " : " + e.getMessage());
+		}
 	}
-
 
 
 	private void saveAuthentication(Member member) {

@@ -3,6 +3,7 @@ package com.ridetogether.server.global.security.application;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
+import com.ridetogether.server.global.apiPayload.exception.GeneralException;
 import com.ridetogether.server.global.security.domain.JwtToken;
 import com.ridetogether.server.global.security.domain.JwtTokenProvider;
 import com.ridetogether.server.global.security.domain.CustomUserDetails;
@@ -17,8 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,8 +38,6 @@ public class JwtServiceImpl implements JwtService {
 	@Value("${jwt.refresh.header}")
 	private String refreshHeader;
 
-	private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
-	private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
 	private static final String BEARER = "Bearer ";
 
 	//== 메서드 ==//

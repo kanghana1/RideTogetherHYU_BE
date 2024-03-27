@@ -34,7 +34,7 @@ public class MemberController {
 			@Valid @RequestBody CreateMemberRequestDto requestDto) throws Exception {
 		// request로 들어온 JSON 데이터를 회원가입 Dto로 변환
 		MemberSignupDto memberSignupDto = MemberDtoConverter.convertRequestToSignupDto(requestDto);
-		Long memberIdx = memberService.singUp(memberSignupDto);
+		Long memberIdx = memberService.signUp(memberSignupDto);
 
 		SignupResponseDto signupResponseDto = SignupResponseDto.builder()
 				.idx(memberIdx)
@@ -50,5 +50,10 @@ public class MemberController {
 		return ApiResponse.onSuccess(memberInfoResponseDto);
 	}
 
-
+	@GetMapping("/exception")
+	@ResponseStatus(HttpStatus.OK)
+	public String exception() {
+		memberService.createException();
+		return "실패";
+	}
 }

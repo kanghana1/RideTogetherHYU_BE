@@ -3,6 +3,7 @@ package com.ridetogether.server.global.security.domain;
 import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
+import com.ridetogether.server.global.apiPayload.exception.GeneralException;
 import com.ridetogether.server.global.apiPayload.exception.handler.MemberHandler;
 import com.ridetogether.server.global.security.domain.CustomUserDetails;
 import com.ridetogether.server.global.security.domain.JwtToken;
@@ -119,8 +120,7 @@ public class JwtTokenProvider {
 		// UserDetails 객체를 만들어서 Authentication return
 		// UserDetails: interface, User: UserDetails를 구현한 class
 		String memberId = (String) claims.get("memberId");
-		Member member = memberRepository.findByMemberId(memberId)
-				.orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+		Member member = memberRepository.findByEmail(memberId);
 		UserDetails principal = new CustomUserDetails(member);
 		return new UsernamePasswordAuthenticationToken(principal, "", authorities);
 	}

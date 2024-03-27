@@ -29,7 +29,7 @@ public class MemberService {
 
 	private static final String HANYANG_EMAIL = "@hanyang.ac.kr";
 
-	public Long singUp(MemberSignupDto memberSignupDto) throws Exception {
+	public Long signUp(MemberSignupDto memberSignupDto) throws Exception {
 		if (isExistByEmail(memberSignupDto.getEmail())) {
 			throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_ALREADY_EXIST);
 		}
@@ -70,4 +70,7 @@ public class MemberService {
 		return memberRepository.existsByNickName(nickName);
 	}
 
+	public void createException() {
+		throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+	}
 }
