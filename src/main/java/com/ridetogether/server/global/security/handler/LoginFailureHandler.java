@@ -22,9 +22,15 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-		response.setStatus(ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getHttpStatus().value());
-		response.getWriter().write(objectMapper.writeValueAsString(ApiResponse.onFailure(ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getCode(),
-				ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getMessage(), exception.getMessage())));
+		if (exception.getMessage().contains("Content-Type")){
+			response.setStatus(ErrorStatus.MEMBER_LOGIN_NOT_SUPPORT.getHttpStatus().value());
+			response.getWriter().write(objectMapper.writeValueAsString(ApiResponse.onFailure(ErrorStatus.MEMBER_LOGIN_NOT_SUPPORT.getCode(),
+					ErrorStatus.MEMBER_LOGIN_NOT_SUPPORT.getMessage(), exception.getMessage())));
+		} else {
+			response.setStatus(ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getHttpStatus().value());
+			response.getWriter().write(objectMapper.writeValueAsString(ApiResponse.onFailure(ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getCode(),
+					ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getMessage(), exception.getMessage())));
+		}
 		log.info("Authentication failed: " + exception.getMessage());
 	}
 }
