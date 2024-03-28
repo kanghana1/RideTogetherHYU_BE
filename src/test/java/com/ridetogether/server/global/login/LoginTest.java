@@ -1,5 +1,6 @@
 package com.ridetogether.server.global.login;
 
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -99,17 +100,52 @@ public class LoginTest {
 	}
 
 	@Test
-	public void 로그인_아이디_비밀번호_틀림() throws Exception{
+	public void 로그인_아이디_틀림() throws Exception{
 		//given
-		Map<String, String> map = getMemberIdPasswordMap(memberId, PASSWORD+"123");
+		Map<String, String> map = getMemberIdPasswordMap(memberId+"123", PASSWORD);
 		//when
-		MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(LOGIN_API_URL)
-						.contentType(APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(map)))
+		MvcResult result = perform(LOGIN_API_URL, APPLICATION_JSON, map)
 				.andExpect(status().isUnauthorized())
 				.andExpect(jsonPath("$.isSuccess").value(ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getReason().isSuccess()))
 				.andExpect(jsonPath("$.code").value(ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getReason().getCode()))
 				.andExpect(jsonPath("$.message").value(ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getReason().getMessage()))
+				.andReturn();
+	}
+
+	@Test
+	public void 로그인_비밀번호_틀림() throws Exception{
+		//given
+		Map<String, String> map = getMemberIdPasswordMap(memberId, PASSWORD+"123");
+		//when
+		MvcResult result = perform(LOGIN_API_URL, APPLICATION_JSON, map)
+				.andExpect(status().isUnauthorized())
+				.andExpect(jsonPath("$.isSuccess").value(ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getReason().isSuccess()))
+				.andExpect(jsonPath("$.code").value(ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getReason().getCode()))
+				.andExpect(jsonPath("$.message").value(ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getReason().getMessage()))
+				.andReturn();
+	}
+
+	@Test
+	public void 로그인_형식_오류시_415() throws Exception{
+		//given
+		Map<String, String> map = getMemberIdPasswordMap(memberId, PASSWORD);
+		//when
+		MvcResult result = perform(LOGIN_API_URL, APPLICATION_FORM_URLENCODED, map)
+				.andExpect(status().isUnsupportedMediaType())
+				.andExpect(jsonPath("$.isSuccess").value(ErrorStatus.MEMBER_LOGIN_NOT_SUPPORT.getReason().isSuccess()))
+				.andExpect(jsonPath("$.code").value(ErrorStatus.MEMBER_LOGIN_NOT_SUPPORT.getReason().getCode()))
+				.andExpect(jsonPath("$.message").value(ErrorStatus.MEMBER_LOGIN_NOT_SUPPORT.getReason().getMessage()))
+				.andReturn();
+	}
+	@Test
+	public void 로그인_메소드_오류시_404() throws Exception{
+		//given
+		Map<String, String> map = getMemberIdPasswordMap(memberId, PASSWORD);
+		//when
+		MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(LOGIN_API_URL)
+				.contentType(APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(map)))
+				.andExpect(status().isNotFound())
 				.andReturn();
 	}
 

@@ -29,9 +29,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtService jwtService;
 	private final MemberRepository memberRepository;
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private ObjectMapper objectMapper = new ObjectMapper();
 
-	private final GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();//5
+	private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();//5
 
 	private final String NO_CHECK_URL = "/api/member/login";//1
 
