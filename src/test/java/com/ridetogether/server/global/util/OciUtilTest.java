@@ -27,23 +27,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+@SpringBootTest
 public class OciUtilTest {
+
+	@Autowired
+	ObjectStorage objectStorage;
+
+	@Autowired
+	UploadManager uploadManager;
 
 	@Test
 	public void Test() throws IOException {
 		final String bucket = "RideTogetherHYU_Bucket";
 
-		ConfigFile config = ConfigFileReader.parse("~/.oci/config", "DEFAULT");
-
-		AuthenticationDetailsProvider provider = new ConfigFileAuthenticationDetailsProvider(config);
-
-
-		ObjectStorage client = new ObjectStorageClient(provider);
-		client.setRegion(Region.AP_CHUNCHEON_1);
-
 		System.out.println("Getting the namespace.");
-		GetNamespaceResponse namespaceResponse = client.getNamespace(GetNamespaceRequest.builder().build());
+		GetNamespaceResponse namespaceResponse = objectStorage.getNamespace(GetNamespaceRequest.builder().build());
 
 		String namespaceName = namespaceResponse.getValue();
 		System.out.println("namespaceName = " + namespaceName);
@@ -60,7 +61,7 @@ public class OciUtilTest {
 						.build();
 
 		System.out.println("Fetching bucket details");
-		GetBucketResponse response = client.getBucket(request);
+		GetBucketResponse response = objectStorage.getBucket(request);
 
 		System.out.println("Bucket Name : " + response.getBucket().getName());
 		System.out.println("Bucket Compartment : " + response.getBucket().getCompartmentId());
@@ -75,23 +76,6 @@ public class OciUtilTest {
 
 	@Test
 	public void UploadObjectTest() throws Exception {
-		ConfigFile config = ConfigFileReader.parse("~/.oci/config", "DEFAULT");
-
-		AuthenticationDetailsProvider provider = new ConfigFileAuthenticationDetailsProvider(config);
-
-		ObjectStorage client = new ObjectStorageClient(provider);
-		client.setRegion(Region.AP_CHUNCHEON_1);
-
-
-		//upload object
-		UploadConfiguration uploadConfiguration =
-				UploadConfiguration.builder()
-						.allowMultipartUploads(true)
-						.allowParallelUploads(true)
-						.build();
-
-		UploadManager uploadManager = new UploadManager(client, uploadConfiguration);
-
 		String bucketName = "RideTogetherHYU_Bucket";
 		String namespaceName = "axjoaeuyezzj";
 		String objectName = "img/test.png";
@@ -121,7 +105,7 @@ public class OciUtilTest {
 		UploadResponse response = uploadManager.upload(uploadDetails);
 		System.out.println(response);
 
-		client.close();
+		objectStorage.close();
 	}
 
 	@Test
