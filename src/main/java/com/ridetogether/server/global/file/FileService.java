@@ -10,9 +10,9 @@ public interface FileService {
 	public String uploadProfileImg(MultipartFile file, Long memberId) throws Exception;
 	public String uploadKakaoQrImg(MultipartFile file, Long memberId) throws Exception;
 
-	public String getPublicImgUrl(String imgUrl, Long memberId);
+	public String getPublicImgUrl(String imgUrl, Long memberId) throws Exception ;
 
-	public MultipartFile downloadImg(String imgUrl, Long memberId);
+	public MultipartFile downloadImg(String imgUrl, Long memberId) throws Exception;
 
 	public void deleteImg(String imgUrl) throws Exception;
 

@@ -1,17 +1,27 @@
 package com.ridetogether.server.global.file;
 
+import com.oracle.bmc.Region;
 import com.oracle.bmc.objectstorage.ObjectStorage;
+import com.oracle.bmc.objectstorage.model.CreatePreauthenticatedRequestDetails;
+import com.oracle.bmc.objectstorage.model.CreatePreauthenticatedRequestDetails.AccessType;
+import com.oracle.bmc.objectstorage.requests.CreatePreauthenticatedRequestRequest;
 import com.oracle.bmc.objectstorage.requests.DeleteObjectRequest;
+import com.oracle.bmc.objectstorage.requests.GetPreauthenticatedRequestRequest;
 import com.oracle.bmc.objectstorage.requests.PutObjectRequest;
+import com.oracle.bmc.objectstorage.responses.CreatePreauthenticatedRequestResponse;
+import com.oracle.bmc.objectstorage.responses.GetPreauthenticatedRequestResponse;
 import com.oracle.bmc.objectstorage.transfer.UploadManager;
 import com.oracle.bmc.objectstorage.transfer.UploadManager.UploadRequest;
 import com.oracle.bmc.objectstorage.transfer.UploadManager.UploadResponse;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.Builder;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +41,15 @@ public class OracleFileService implements FileService {
 	@Autowired
 	UploadManager uploadManager;
 
+
 	private static final String BUCKET_NAME = "RideTogetherHYU_Bucket";
 	private static final String BUCKET_NAME_SPACE = "axjoaeuyezzj";
 	private static final String PROFILE_IMG_DIR = "profile/";
+	public static final String DEFAULT_URI_PREFIX = "https://" + BUCKET_NAME_SPACE + ".objectstorage."
+			+ Region.AP_CHUNCHEON_1.getRegionId() + ".oci.customer-oci.com";
 	private static final String KAKAO_IMG_DIR = "kakao/";
+
+	private static final long PRE_AUTH_EXPIRE_MINUTE = 20;
 
 	@Override
 	public String uploadProfileImg(MultipartFile file, Long memberId) throws Exception{
@@ -52,12 +67,24 @@ public class OracleFileService implements FileService {
 	}
 
 	@Override
-	public String getPublicImgUrl(String imgUrl, Long memberId) {
+	public String getPublicImgUrl(String imgUrl, Long memberId) throws Exception {
+		AuthenticatedRequest authenticatedRequest = getPreAuth(imgUrl);
+		System.out.println("authenticatedRequest.getAuthenticateId() = " + authenticatedRequest.getAuthenticateId());
+		System.out.println("authenticatedRequest.getAccessUri() = " + DEFAULT_URI_PREFIX +authenticatedRequest.getAccessUri());
+
+		GetPreauthenticatedRequestRequest request =
+				GetPreauthenticatedRequestRequest.builder()
+						.namespaceName(BUCKET_NAME_SPACE)
+						.bucketName(BUCKET_NAME)
+						.parId(authenticatedRequest.getAuthenticateId())	//parId 필수
+						.build();
+		GetPreauthenticatedRequestResponse response = objectStorage.getPreauthenticatedRequest(request);
+		System.out.println("response = " + response);
 		return null;
 	}
 
 	@Override
-	public MultipartFile downloadImg(String imgUrl, Long memberId) {
+	public MultipartFile downloadImg(String imgUrl, Long memberId) throws Exception{
 		return null;
 	}
 
@@ -122,4 +149,43 @@ public class OracleFileService implements FileService {
 		}
 		log.info("File delete fail");
 	}
+
+	public AuthenticatedRequest getPreAuth(String imgUrl) throws Exception{
+		Date now = new Date();
+		Date expireTime = new Date(now.getTime() + PRE_AUTH_EXPIRE_MINUTE * 60 * 1000);
+
+		CreatePreauthenticatedRequestDetails details =
+				CreatePreauthenticatedRequestDetails.builder()
+						.accessType(AccessType.ObjectReadWrite)
+						.objectName(imgUrl)
+						.timeExpires(expireTime)
+						.name(imgUrl)
+						.build();
+
+		CreatePreauthenticatedRequestRequest request =
+				CreatePreauthenticatedRequestRequest.builder()
+						.namespaceName(BUCKET_NAME_SPACE)
+						.bucketName(BUCKET_NAME)
+						.createPreauthenticatedRequestDetails(details)
+						.build();
+
+		CreatePreauthenticatedRequestResponse response = objectStorage.createPreauthenticatedRequest(request);
+
+		return AuthenticatedRequest.builder()
+				.authenticateId(response.getPreauthenticatedRequest().getId())
+				.accessUri(response.getPreauthenticatedRequest().getAccessUri())
+				.build();
+	}
+
+	public void deletePreAuth() throws Exception {
+	}
+
+	@Data
+	@Builder
+	static class AuthenticatedRequest {
+		String accessUri;
+		String authenticateId;
+	}
+
+
 }
