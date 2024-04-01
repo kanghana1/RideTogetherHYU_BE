@@ -69,9 +69,6 @@ public class OracleFileService implements FileService {
 	@Override
 	public String getPublicImgUrl(String imgUrl, Long memberId) throws Exception {
 		AuthenticatedRequest authenticatedRequest = getPreAuth(imgUrl);
-		System.out.println("authenticatedRequest.getAuthenticateId() = " + authenticatedRequest.getAuthenticateId());
-		System.out.println("authenticatedRequest.getAccessUri() = " + DEFAULT_URI_PREFIX +authenticatedRequest.getAccessUri());
-
 		GetPreauthenticatedRequestRequest request =
 				GetPreauthenticatedRequestRequest.builder()
 						.namespaceName(BUCKET_NAME_SPACE)
@@ -79,8 +76,9 @@ public class OracleFileService implements FileService {
 						.parId(authenticatedRequest.getAuthenticateId())	//parId 필수
 						.build();
 		GetPreauthenticatedRequestResponse response = objectStorage.getPreauthenticatedRequest(request);
-		System.out.println("response = " + response);
-		return null;
+		log.info("response = " + response);
+		log.info("PublicImgUrl 발급에 성공하였습니다 : {}", DEFAULT_URI_PREFIX + authenticatedRequest.getAccessUri());
+		return DEFAULT_URI_PREFIX +authenticatedRequest.getAccessUri();
 	}
 
 	@Override
