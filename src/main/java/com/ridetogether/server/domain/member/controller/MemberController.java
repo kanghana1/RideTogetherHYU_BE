@@ -2,6 +2,7 @@ package com.ridetogether.server.domain.member.controller;
 
 import com.ridetogether.server.domain.image.application.OracleImageService;
 import com.ridetogether.server.domain.image.domain.Image;
+import com.ridetogether.server.domain.image.model.ImageType;
 import com.ridetogether.server.domain.member.application.MemberService;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.domain.member.dto.MemberDto.MemberSignupDto;
@@ -79,10 +80,10 @@ public class MemberController {
 	}
 
 	@PostMapping(value = "/api/member/kakao-img")
-	public ApiResponse<ImageResponseDto> uploadKakaoImage(ImageRequestDto requestDto) throws Exception{
+	public ApiResponse<ImageResponseDto> uploadKakaoImage(@RequestPart(value="image", required = true) MultipartFile image) throws Exception{
 		Member loginMember = SecurityUtil.getLoginMember()
 				.orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-		Long imageIdx = oracleImageService.uploadKakaoQrImg(requestDto.getImgUrl(), loginMember.getIdx());
+		Long imageIdx = oracleImageService.uploadKakaoQrImg(image, loginMember.getIdx());
 		String accessUri = oracleImageService.getPublicImgUrl(imageIdx, loginMember.getIdx());
 
 		ImageResponseDto responseDto = ImageResponseDto.builder()
@@ -92,9 +93,22 @@ public class MemberController {
 		return ApiResponse.onSuccess(responseDto);
 	}
 
-	@Data
-	static class ImageRequestDto {
-		private MultipartFile imgUrl;
+	@GetMapping("/api/member/kakao-img")
+	public ApiResponse<ImageResponseDto> getKakaoImage() throws Exception{
+		String accessUri = memberService.getImage(ImageType.KAKAO);
+		ImageResponseDto responseDto = ImageResponseDto.builder()
+				.accessUri(accessUri)
+				.build();
+		return ApiResponse.onSuccess(responseDto);
+	}
+
+	@GetMapping("/api/member/profile-img")
+	public ApiResponse<ImageResponseDto> getProfileImage() throws Exception{
+		String accessUri = memberService.getImage(ImageType.PROFILE);
+		ImageResponseDto responseDto = ImageResponseDto.builder()
+				.accessUri(accessUri)
+				.build();
+		return ApiResponse.onSuccess(responseDto);
 	}
 
 }

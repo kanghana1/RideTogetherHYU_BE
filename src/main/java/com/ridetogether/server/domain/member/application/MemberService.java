@@ -2,6 +2,8 @@ package com.ridetogether.server.domain.member.application;
 
 import static com.ridetogether.server.global.config.SecurityConfig.passwordEncoder;
 
+import com.ridetogether.server.domain.image.domain.Image;
+import com.ridetogether.server.domain.image.model.ImageType;
 import com.ridetogether.server.domain.member.converter.MemberDtoConverter;
 import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
@@ -13,6 +15,7 @@ import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
 import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
 import com.ridetogether.server.global.security.application.JwtService;
 import com.ridetogether.server.global.util.SecurityUtil;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -60,6 +63,21 @@ public class MemberService {
 	public MemberInfoResponseDto getMyInfo() {
 		Member member = SecurityUtil.getLoginMember().orElseThrow(() -> new ErrorHandler(ErrorStatus._UNAUTHORIZED));
 		return MemberDtoConverter.convertMemberToInfoResponseDto(member);
+	}
+
+	public String getImage(ImageType imageType) {
+		Member member = SecurityUtil.getLoginMember()
+				.orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+		List<Image> images = member.getImages();
+		if (images.isEmpty()) {
+			throw new ErrorHandler(ErrorStatus.IMAGE_NOT_FOUND);
+		}
+		for (Image x : images) {
+			if (x.getImageType() == imageType) {
+				return x.getAccessUri();
+			}
+		}
+		return null;
 	}
 
 	public boolean isExistByEmail(String email) {
