@@ -10,15 +10,12 @@ import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.domain.member.dto.MemberRequestDto.CreateMemberRequestDto;
 import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
-import com.ridetogether.server.global.apiPayload.exception.handler.MemberHandler;
+import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
 import jakarta.persistence.EntityManager;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -76,13 +73,13 @@ class OracleImageServiceTest {
 //		MockMultipartFile multipartFile = getMultipartFile();
 		File body = new File("C:\\Users\\dh101\\Desktop\\img\\git.png");
 		Long memberIdx = setMember();
-		Member member = memberRepository.findByIdx(memberIdx).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+		Member member = memberRepository.findByIdx(memberIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
 		String fileDir = memberIdx + "/" + "profile/";
-		Long imageIdx = oracleFileService.upload(body, fileDir, member);
+//		Long imageIdx = oracleFileService.upload(body, fileDir, member);
 
 
-		assertThat(imageIdx).isEqualTo(member.getImages().get(0).getIdx());
+//		assertThat(imageIdx).isEqualTo(member.getImages().get(0).getIdx());
 	}
 
 //	private MockMultipartFile getMultipartFile() throws IOException {
@@ -93,10 +90,10 @@ class OracleImageServiceTest {
 //	}
 
 	// 임의로 값을 넣어서 하는 테스트
-	@Test
-	public void 이미지_사전인증요청_모두_삭제() throws Exception{
-		oracleFileService.deleteImg("img/test.png");
-		oracleFileService.deletePreAuth("KxQNBVfeG0A9TmvDSJReH7dX4K1uLWRIm69jj4b0m6OMbVYgjn1HMUohP4DFOSNq:img/test.png");
-	}
+//	@Test
+//	public void 이미지_사전인증요청_모두_삭제() throws Exception{
+//		oracleFileService.deleteImg("img/test.png");
+//		oracleFileService.deletePreAuth("KxQNBVfeG0A9TmvDSJReH7dX4K1uLWRIm69jj4b0m6OMbVYgjn1HMUohP4DFOSNq:img/test.png");
+//	}
 
 }

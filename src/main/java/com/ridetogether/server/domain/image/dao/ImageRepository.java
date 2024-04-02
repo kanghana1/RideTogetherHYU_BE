@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ImageRepository extends JpaRepository<Image, Long> {
 
 	Optional<Image> findImageByIdx(Long idx);
+	Optional<Image> findImageByImgUrl(String imgUrl);
 }

@@ -2,11 +2,6 @@ package com.ridetogether.server.global.security.domain;
 
 import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
-import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
-import com.ridetogether.server.global.apiPayload.exception.GeneralException;
-import com.ridetogether.server.global.apiPayload.exception.handler.MemberHandler;
-import com.ridetogether.server.global.security.domain.CustomUserDetails;
-import com.ridetogether.server.global.security.domain.JwtToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

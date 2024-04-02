@@ -47,4 +47,16 @@ public class Image {
 	@Enumerated(EnumType.STRING)
 	private ImageType imageType;
 
+	public void updateAccessUri(String accessUri) {
+		this.accessUri = accessUri;
+	}
+
+	public void updateParId(String parId) {
+		this.parId = parId;
+	}
+
+	public void updateImageType(ImageType imageType) {
+		this.imageType = imageType;
+	}
+
 }

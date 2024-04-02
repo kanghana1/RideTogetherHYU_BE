@@ -11,8 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class MemberRequestDto {
 	@Builder
 	@Data
-	@NoArgsConstructor
-	@AllArgsConstructor
 	public static class CreateMemberRequestDto {
 		private String memberId;
 		private String password;
@@ -28,10 +26,9 @@ public class MemberRequestDto {
 
 	@Builder
 	@Data
-	@NoArgsConstructor
-	@AllArgsConstructor
 	public static class LoginMemberRequestDto {
 		private String memberId;
 		private String password;
 	}
+
 }

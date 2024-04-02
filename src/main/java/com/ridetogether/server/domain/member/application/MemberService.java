@@ -10,7 +10,7 @@ import com.ridetogether.server.domain.member.dto.MemberResponseDto.MemberInfoRes
 import com.ridetogether.server.domain.member.model.ActiveState;
 import com.ridetogether.server.domain.member.model.StudentStatus;
 import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
-import com.ridetogether.server.global.apiPayload.exception.handler.MemberHandler;
+import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
 import com.ridetogether.server.global.security.application.JwtService;
 import com.ridetogether.server.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
@@ -31,10 +31,10 @@ public class MemberService {
 
 	public Long signUp(MemberSignupDto memberSignupDto) throws Exception {
 		if (isExistByEmail(memberSignupDto.getEmail())) {
-			throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_ALREADY_EXIST);
+			throw new ErrorHandler(ErrorStatus.MEMBER_EMAIL_ALREADY_EXIST);
 		}
 		if (isExistByNickName(memberSignupDto.getNickName())) {
-			throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_ALREADY_EXIST);
+			throw new ErrorHandler(ErrorStatus.MEMBER_NICKNAME_ALREADY_EXIST);
 		}
 		Member member = Member.builder()
 				.memberId(memberSignupDto.getMemberId())
@@ -58,7 +58,7 @@ public class MemberService {
 	}
 
 	public MemberInfoResponseDto getMyInfo() {
-		Member member = SecurityUtil.getLoginMember().orElseThrow(() -> new MemberHandler(ErrorStatus._UNAUTHORIZED));
+		Member member = SecurityUtil.getLoginMember().orElseThrow(() -> new ErrorHandler(ErrorStatus._UNAUTHORIZED));
 		return MemberDtoConverter.convertMemberToInfoResponseDto(member);
 	}
 
@@ -71,6 +71,6 @@ public class MemberService {
 	}
 
 	public void createException() {
-		throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+		throw new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND);
 	}
 }
