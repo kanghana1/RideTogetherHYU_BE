@@ -17,7 +17,6 @@ import com.oracle.bmc.objectstorage.requests.PutObjectRequest;
 import com.oracle.bmc.objectstorage.responses.GetBucketResponse;
 import com.oracle.bmc.objectstorage.responses.GetNamespaceResponse;
 import com.oracle.bmc.objectstorage.responses.ListObjectsResponse;
-import com.oracle.bmc.objectstorage.transfer.UploadConfiguration;
 import com.oracle.bmc.objectstorage.transfer.UploadManager;
 import com.oracle.bmc.objectstorage.transfer.UploadManager.UploadRequest;
 import com.oracle.bmc.objectstorage.transfer.UploadManager.UploadResponse;
@@ -80,7 +79,7 @@ public class OciUtilTest {
 		String namespaceName = "axjoaeuyezzj";
 		String objectName = "img/test.png";
 		Map<String, String> metadata = null;
-		String contentType = "image/png";
+		String contentType = "img/png";
 
 		String contentEncoding = null;
 		String contentLanguage = null;
@@ -105,7 +104,7 @@ public class OciUtilTest {
 		UploadResponse response = uploadManager.upload(uploadDetails);
 		System.out.println(response);
 
-		objectStorage.close();
+//		objectStorage.close();
 	}
 
 	@Test

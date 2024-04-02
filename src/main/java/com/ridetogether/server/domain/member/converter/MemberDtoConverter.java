@@ -5,9 +5,9 @@ import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.domain.member.dto.MemberDto.MemberSignupDto;
 import com.ridetogether.server.domain.member.dto.MemberRequestDto.CreateMemberRequestDto;
 import com.ridetogether.server.domain.member.dto.MemberResponseDto.MemberInfoResponseDto;
-import com.ridetogether.server.domain.model.Bank;
-import com.ridetogether.server.domain.model.Gender;
-import com.ridetogether.server.domain.model.Role;
+import com.ridetogether.server.domain.member.model.Bank;
+import com.ridetogether.server.domain.member.model.Gender;
+import com.ridetogether.server.domain.member.model.Role;
 
 public class MemberDtoConverter {
 

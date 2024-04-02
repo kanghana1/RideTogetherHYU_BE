@@ -1,4 +1,4 @@
-package com.ridetogether.server.global.file;
+package com.ridetogether.server.domain.image.application;
 
 import com.oracle.bmc.Region;
 import com.oracle.bmc.objectstorage.ObjectStorage;
@@ -6,6 +6,7 @@ import com.oracle.bmc.objectstorage.model.CreatePreauthenticatedRequestDetails;
 import com.oracle.bmc.objectstorage.model.CreatePreauthenticatedRequestDetails.AccessType;
 import com.oracle.bmc.objectstorage.requests.CreatePreauthenticatedRequestRequest;
 import com.oracle.bmc.objectstorage.requests.DeleteObjectRequest;
+import com.oracle.bmc.objectstorage.requests.DeletePreauthenticatedRequestRequest;
 import com.oracle.bmc.objectstorage.requests.GetPreauthenticatedRequestRequest;
 import com.oracle.bmc.objectstorage.requests.PutObjectRequest;
 import com.oracle.bmc.objectstorage.responses.CreatePreauthenticatedRequestResponse;
@@ -13,9 +14,16 @@ import com.oracle.bmc.objectstorage.responses.GetPreauthenticatedRequestResponse
 import com.oracle.bmc.objectstorage.transfer.UploadManager;
 import com.oracle.bmc.objectstorage.transfer.UploadManager.UploadRequest;
 import com.oracle.bmc.objectstorage.transfer.UploadManager.UploadResponse;
+import com.ridetogether.server.domain.image.dao.ImageRepository;
+import com.ridetogether.server.domain.image.domain.Image;
+import com.ridetogether.server.domain.member.dao.MemberRepository;
+import com.ridetogether.server.domain.member.domain.Member;
+import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
+import com.ridetogether.server.global.apiPayload.exception.handler.MemberHandler;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
@@ -33,13 +41,16 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class OracleFileService implements FileService {
+public class OracleImageService implements ImageService {
 
-	@Autowired
-	ObjectStorage objectStorage;
+	private final ObjectStorage client;
 
-	@Autowired
-	UploadManager uploadManager;
+	private final UploadManager uploadManager;
+
+	private final MemberRepository memberRepository;
+
+	private final ImageRepository imageRepository;
+
 
 
 	private static final String BUCKET_NAME = "RideTogetherHYU_Bucket";
@@ -52,22 +63,24 @@ public class OracleFileService implements FileService {
 	private static final long PRE_AUTH_EXPIRE_MINUTE = 20;
 
 	@Override
-	public String uploadProfileImg(MultipartFile file, Long memberId) throws Exception{
+	public Long uploadProfileImg(MultipartFile file, Long memberIdx) throws Exception{
 		File uploadFile = convert(file)  // 파일 변환할 수 없으면 에러
 				.orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
-		String fileDir = memberId + "/" + PROFILE_IMG_DIR;
-		return upload(uploadFile, fileDir);
+		String fileDir = memberIdx + "/" + PROFILE_IMG_DIR;
+		Member member = memberRepository.findByIdx(memberIdx).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+		return upload(uploadFile, fileDir, member);
 	}
 	@Override
-	public String uploadKakaoQrImg(MultipartFile file, Long memberId) throws Exception{
+	public Long uploadKakaoQrImg(MultipartFile file, Long memberIdx) throws Exception{
 		File uploadFile = convert(file)  // 파일 변환할 수 없으면 에러
 				.orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
-		String fileDir = memberId + "/" + KAKAO_IMG_DIR;
-		return upload(uploadFile, fileDir);
+		String fileDir = memberIdx + "/" + KAKAO_IMG_DIR;
+		Member member = memberRepository.findByIdx(memberIdx).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+		return upload(uploadFile, fileDir, member);
 	}
 
 	@Override
-	public String getPublicImgUrl(String imgUrl, Long memberId) throws Exception {
+	public String getPublicImgUrl(String imgUrl, Long memberIdx) throws Exception {
 		AuthenticatedRequest authenticatedRequest = getPreAuth(imgUrl);
 		GetPreauthenticatedRequestRequest request =
 				GetPreauthenticatedRequestRequest.builder()
@@ -75,14 +88,14 @@ public class OracleFileService implements FileService {
 						.bucketName(BUCKET_NAME)
 						.parId(authenticatedRequest.getAuthenticateId())	//parId 필수
 						.build();
-		GetPreauthenticatedRequestResponse response = objectStorage.getPreauthenticatedRequest(request);
+		GetPreauthenticatedRequestResponse response = client.getPreauthenticatedRequest(request);
 		log.info("response = " + response);
 		log.info("PublicImgUrl 발급에 성공하였습니다 : {}", DEFAULT_URI_PREFIX + authenticatedRequest.getAccessUri());
 		return DEFAULT_URI_PREFIX +authenticatedRequest.getAccessUri();
 	}
 
 	@Override
-	public MultipartFile downloadImg(String imgUrl, Long memberId) throws Exception{
+	public MultipartFile downloadImg(String imgUrl, Long memberIdx) throws Exception{
 		return null;
 	}
 
@@ -95,15 +108,15 @@ public class OracleFileService implements FileService {
 						.namespaceName(BUCKET_NAME_SPACE)
 						.objectName(imgUrl)
 						.build();
-		
-		objectStorage.deleteObject(request);
-		objectStorage.close();
+
+		client.deleteObject(request);
+//		client.close();
 	}
 
 	// 오라클 버킷으로 파일 업로드
-	private String upload(File uploadFile, String dirName) throws Exception{
+	public Long upload(File uploadFile, String dirName, Member member) throws Exception{
 		String fileName = dirName + UUID.randomUUID() + uploadFile.getName();   // S3에 저장된 파일 이름
-		String contentType = fileName.endsWith(".png") ? "image/png" : "image/jpg";
+		String contentType = "img/" + fileName.substring(fileName.length() - 3); // PNG, JPG 만 가능함
 		String contentEncoding = null;
 		String contentLanguage = null;
 		Map<String, String> metadata = null;
@@ -122,10 +135,22 @@ public class OracleFileService implements FileService {
 
 		UploadResponse response = uploadManager.upload(uploadDetails);
 		log.info("Upload Success. File : {}", fileName);
+
 		removeNewFile(uploadFile);
-		objectStorage.close();
-		return fileName;
+//		client.close();
+		return saveImageToMember(member, fileName);
 	}
+
+	private Long saveImageToMember(Member member, String fileName) {
+		Image image = Image.builder()
+				.member(member)
+				.accessUri(fileName)
+				.build();
+		imageRepository.save(image);
+		member.getImages().add(image);
+		return image.getIdx();
+	}
+
 
 	// 로컬에 파일 업로드 해서 convert
 	private Optional<File> convert(MultipartFile file) throws IOException {
@@ -149,8 +174,10 @@ public class OracleFileService implements FileService {
 	}
 
 	public AuthenticatedRequest getPreAuth(String imgUrl) throws Exception{
-		Date now = new Date();
-		Date expireTime = new Date(now.getTime() + PRE_AUTH_EXPIRE_MINUTE * 60 * 1000);
+		Calendar cal = Calendar.getInstance();
+		cal.set(2024, Calendar.DECEMBER, 30);
+
+		Date expireTime = cal.getTime();
 
 		CreatePreauthenticatedRequestDetails details =
 				CreatePreauthenticatedRequestDetails.builder()
@@ -167,7 +194,7 @@ public class OracleFileService implements FileService {
 						.createPreauthenticatedRequestDetails(details)
 						.build();
 
-		CreatePreauthenticatedRequestResponse response = objectStorage.createPreauthenticatedRequest(request);
+		CreatePreauthenticatedRequestResponse response = client.createPreauthenticatedRequest(request);
 
 		return AuthenticatedRequest.builder()
 				.authenticateId(response.getPreauthenticatedRequest().getId())
@@ -175,7 +202,15 @@ public class OracleFileService implements FileService {
 				.build();
 	}
 
-	public void deletePreAuth() throws Exception {
+	public void deletePreAuth(String parId) throws Exception {
+		DeletePreauthenticatedRequestRequest request =
+				DeletePreauthenticatedRequestRequest.builder()
+						.namespaceName(BUCKET_NAME_SPACE)
+						.bucketName(BUCKET_NAME)
+						.parId(parId)
+						.build();
+
+		client.deletePreauthenticatedRequest(request);
 	}
 
 	@Data
@@ -183,6 +218,7 @@ public class OracleFileService implements FileService {
 	static class AuthenticatedRequest {
 		String accessUri;
 		String authenticateId;
+		String imgUrl;
 	}
 
 

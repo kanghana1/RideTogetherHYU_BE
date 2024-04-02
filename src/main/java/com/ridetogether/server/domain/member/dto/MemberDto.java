@@ -1,8 +1,8 @@
 package com.ridetogether.server.domain.member.dto;
 
-import com.ridetogether.server.domain.model.Bank;
-import com.ridetogether.server.domain.model.Gender;
-import com.ridetogether.server.domain.model.Role;
+import com.ridetogether.server.domain.member.model.Bank;
+import com.ridetogether.server.domain.member.model.Gender;
+import com.ridetogether.server.domain.member.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
