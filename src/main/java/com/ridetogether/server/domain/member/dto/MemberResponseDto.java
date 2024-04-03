@@ -7,7 +7,7 @@ public class MemberResponseDto {
 
 	@Data
 	@Builder
-	public static class SignupResponseDto{
+	public static class MemberTaskResultResponseDto {
 		private Long idx;
 		private String nickName;
 		private Boolean isSuccess;
@@ -29,13 +29,11 @@ public class MemberResponseDto {
 
 	}
 
-
 	@Data
 	@Builder
 	public static class IsDuplicatedDto {
 		private boolean isDuplicated;
 	}
-
 
 
 

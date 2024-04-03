@@ -43,4 +43,13 @@ public class MemberRequestDto {
 		private String password;
 	}
 
+	@Builder
+	@Data
+	public static class UpdatePasswordRequestDto {
+		private String memberId;
+		private String password;
+	}
+
+
+
 }

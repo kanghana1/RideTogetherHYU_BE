@@ -10,7 +10,9 @@ import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.domain.member.dto.MemberDto.MemberSignupDto;
 import com.ridetogether.server.domain.member.dto.MemberDto.MemberUpdateDto;
+import com.ridetogether.server.domain.member.dto.MemberRequestDto.UpdatePasswordRequestDto;
 import com.ridetogether.server.domain.member.dto.MemberResponseDto.MemberInfoResponseDto;
+import com.ridetogether.server.domain.member.dto.MemberResponseDto.MemberTaskResultResponseDto;
 import com.ridetogether.server.domain.member.model.ActiveState;
 import com.ridetogether.server.domain.member.model.StudentStatus;
 import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
@@ -34,7 +36,7 @@ public class MemberService {
 
 	private static final String HANYANG_EMAIL = "@hanyang.ac.kr";
 
-	public Long signUp(MemberSignupDto memberSignupDto) throws Exception {
+	public MemberTaskResultResponseDto signUp(MemberSignupDto memberSignupDto) throws Exception {
 		if (isExistByEmail(memberSignupDto.getEmail())) {
 			throw new ErrorHandler(ErrorStatus.MEMBER_EMAIL_ALREADY_EXIST);
 		}
@@ -57,8 +59,12 @@ public class MemberService {
 				.build();
 
 		member.setStudentStatus(member.getMemberId());
-
-		return memberRepository.save(member).getIdx();
+		memberRepository.save(member);
+		return  MemberTaskResultResponseDto.builder()
+				.idx(member.getIdx())
+				.nickName(member.getNickName())
+				.isSuccess(true)
+				.build();
 	}
 
 	public MemberInfoResponseDto getMyInfo() {
@@ -88,6 +94,17 @@ public class MemberService {
 				.orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 		member.updateMember(updateDto);
 		return MemberDtoConverter.convertMemberToInfoResponseDto(member);
+	}
+
+	public MemberTaskResultResponseDto updatePassword(UpdatePasswordRequestDto requestDto) {
+		Member member = memberRepository.findByMemberId(requestDto.getMemberId())
+				.orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+		member.updatePassword(passwordEncoder().encode(requestDto.getPassword()));
+		return  MemberTaskResultResponseDto.builder()
+				.idx(member.getIdx())
+				.nickName(member.getNickName())
+				.isSuccess(true)
+				.build();
 	}
 
 	public boolean isExistByEmail(String email) {

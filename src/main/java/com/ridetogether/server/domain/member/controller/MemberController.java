@@ -8,9 +8,10 @@ import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.domain.member.dto.MemberDto.MemberSignupDto;
 import com.ridetogether.server.domain.member.dto.MemberRequestDto.CreateMemberRequestDto;
 import com.ridetogether.server.domain.member.dto.MemberRequestDto.UpdateMemberRequestDto;
+import com.ridetogether.server.domain.member.dto.MemberRequestDto.UpdatePasswordRequestDto;
 import com.ridetogether.server.domain.member.dto.MemberResponseDto.IsDuplicatedDto;
 import com.ridetogether.server.domain.member.dto.MemberResponseDto.MemberInfoResponseDto;
-import com.ridetogether.server.domain.member.dto.MemberResponseDto.SignupResponseDto;
+import com.ridetogether.server.domain.member.dto.MemberResponseDto.MemberTaskResultResponseDto;
 import com.ridetogether.server.global.apiPayload.ApiResponse;
 import com.ridetogether.server.domain.member.converter.MemberDtoConverter;
 import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
@@ -44,17 +45,11 @@ public class MemberController {
 
 	@PostMapping("/api/member/signup")
 	@ResponseStatus(HttpStatus.OK)
-	public ApiResponse<SignupResponseDto> signUp(
+	public ApiResponse<MemberTaskResultResponseDto> signUp(
 			@Valid @RequestBody CreateMemberRequestDto requestDto) throws Exception {
 		// request로 들어온 JSON 데이터를 회원가입 Dto로 변환
 		MemberSignupDto memberSignupDto = MemberDtoConverter.convertRequestToSignupDto(requestDto);
-		Long memberIdx = memberService.signUp(memberSignupDto);
-
-		SignupResponseDto signupResponseDto = SignupResponseDto.builder()
-				.idx(memberIdx)
-				.nickName(memberSignupDto.getNickName())
-				.isSuccess(true).build();
-		return ApiResponse.onSuccess(signupResponseDto);
+		return ApiResponse.onSuccess(memberService.signUp(memberSignupDto));
 	}
 
 	@GetMapping("/api/member")
@@ -124,6 +119,11 @@ public class MemberController {
 	public ApiResponse<MemberInfoResponseDto> updateMember(@Valid @RequestBody UpdateMemberRequestDto requestDto) {
 		return ApiResponse.onSuccess(
 				memberService.updateMember(MemberDtoConverter.convertRequestToUpdateDto(requestDto)));
+	}
+
+	@PatchMapping("/api/member/password")
+	public ApiResponse<?> updatePassword(@Valid @RequestBody UpdatePasswordRequestDto requestDto) {
+		return ApiResponse.onSuccess(memberService.updatePassword(requestDto));
 	}
 
 }

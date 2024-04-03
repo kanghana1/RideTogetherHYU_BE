@@ -119,4 +119,9 @@ public class Member extends BaseTimeEntity {
 		this.account = dto.getAccount();
 		this.accountBank = dto.getAccountBank();
 	}
+
+	public void updatePassword(String password) {
+		this.password = password;
+
+	}
 }

@@ -9,6 +9,7 @@ import com.ridetogether.server.domain.member.converter.MemberDtoConverter;
 import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.domain.member.dto.MemberRequestDto.CreateMemberRequestDto;
+import com.ridetogether.server.domain.member.dto.MemberResponseDto.MemberTaskResultResponseDto;
 import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
 import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
 import jakarta.persistence.EntityManager;
@@ -62,9 +63,10 @@ class OracleImageServiceTest {
 
 	private Long setMember() throws Exception{
 		CreateMemberRequestDto memberRequestDto = createMemberRequestDto();
-		Long memberId = memberService.signUp(MemberDtoConverter.convertRequestToSignupDto(memberRequestDto));
+		MemberTaskResultResponseDto responseDto = memberService.signUp(
+				MemberDtoConverter.convertRequestToSignupDto(memberRequestDto));
 		clear();
-		return memberId;
+		return responseDto.getIdx();
 	}
 
 	// Mock 멀티파트 파일로 하면 File 변환에 문제가 생겨서 File로 테스트 진행
