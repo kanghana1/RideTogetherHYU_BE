@@ -1,11 +1,15 @@
 package com.ridetogether.server.domain.member.domain;
 
-import com.ridetogether.server.domain.model.ActiveState;
-import com.ridetogether.server.domain.model.Bank;
-import com.ridetogether.server.domain.model.Gender;
-import com.ridetogether.server.domain.model.PayType;
-import com.ridetogether.server.domain.model.StudentStatus;
-import com.ridetogether.server.domain.model.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ridetogether.server.domain.image.domain.Image;
+import com.ridetogether.server.domain.member.dto.MemberDto.MemberUpdateDto;
+import com.ridetogether.server.domain.member.dto.MemberRequestDto.UpdateMemberRequestDto;
+import com.ridetogether.server.domain.member.model.ActiveState;
+import com.ridetogether.server.domain.member.model.Bank;
+import com.ridetogether.server.domain.member.model.Gender;
+import com.ridetogether.server.domain.member.model.PayType;
+import com.ridetogether.server.domain.member.model.StudentStatus;
+import com.ridetogether.server.domain.member.model.Role;
 import com.ridetogether.server.global.common.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +18,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
 import lombok.AccessLevel;
@@ -35,6 +40,7 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "member_idx")
 	private Long idx;
 
+	@Column(nullable = false, unique = true)
 	private String memberId;
 
 	private String name;
@@ -77,6 +83,10 @@ public class Member extends BaseTimeEntity {
 	@Column(length = 1000)
 	private String refreshToken;
 
+	@OneToMany(mappedBy = "member")
+	@JsonIgnore
+	private List<Image> images;
+
 	public void updateRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
 	}
@@ -99,5 +109,19 @@ public class Member extends BaseTimeEntity {
 
 	public boolean isAdmin() {
 		return this.role == Role.ADMIN;
+	}
+
+	public void updateMember(MemberUpdateDto dto) {
+		this.name = dto.getName();
+		this.nickName = dto.getNickName();
+		this.gender = dto.getGender();
+		this.kakaoPayUrl = dto.getKakaoPayUrl();
+		this.account = dto.getAccount();
+		this.accountBank = dto.getAccountBank();
+	}
+
+	public void updatePassword(String password) {
+		this.password = password;
+
 	}
 }

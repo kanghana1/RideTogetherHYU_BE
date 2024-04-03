@@ -2,17 +2,24 @@ package com.ridetogether.server.domain.member.application;
 
 import static com.ridetogether.server.global.config.SecurityConfig.passwordEncoder;
 
+import com.ridetogether.server.domain.image.domain.Image;
+import com.ridetogether.server.domain.image.dto.ImageDto.ImageUriResponseDto;
+import com.ridetogether.server.domain.image.model.ImageType;
 import com.ridetogether.server.domain.member.converter.MemberDtoConverter;
 import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.domain.member.dto.MemberDto.MemberSignupDto;
+import com.ridetogether.server.domain.member.dto.MemberDto.MemberUpdateDto;
+import com.ridetogether.server.domain.member.dto.MemberRequestDto.UpdatePasswordRequestDto;
 import com.ridetogether.server.domain.member.dto.MemberResponseDto.MemberInfoResponseDto;
-import com.ridetogether.server.domain.model.ActiveState;
-import com.ridetogether.server.domain.model.StudentStatus;
+import com.ridetogether.server.domain.member.dto.MemberResponseDto.MemberTaskResultResponseDto;
+import com.ridetogether.server.domain.member.model.ActiveState;
+import com.ridetogether.server.domain.member.model.StudentStatus;
 import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
-import com.ridetogether.server.global.apiPayload.exception.handler.MemberHandler;
+import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
 import com.ridetogether.server.global.security.application.JwtService;
 import com.ridetogether.server.global.util.SecurityUtil;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,12 +36,12 @@ public class MemberService {
 
 	private static final String HANYANG_EMAIL = "@hanyang.ac.kr";
 
-	public Long signUp(MemberSignupDto memberSignupDto) throws Exception {
+	public MemberTaskResultResponseDto signUp(MemberSignupDto memberSignupDto) throws Exception {
 		if (isExistByEmail(memberSignupDto.getEmail())) {
-			throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_ALREADY_EXIST);
+			throw new ErrorHandler(ErrorStatus.MEMBER_EMAIL_ALREADY_EXIST);
 		}
 		if (isExistByNickName(memberSignupDto.getNickName())) {
-			throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_ALREADY_EXIST);
+			throw new ErrorHandler(ErrorStatus.MEMBER_NICKNAME_ALREADY_EXIST);
 		}
 		Member member = Member.builder()
 				.memberId(memberSignupDto.getMemberId())
@@ -44,7 +51,6 @@ public class MemberService {
 				.nickName(memberSignupDto.getNickName())
 				.gender(memberSignupDto.getGender())
 				.kakaoPayUrl(memberSignupDto.getKakaoPayUrl())
-				.kakaoQrImageUrl(memberSignupDto.getKakaoQrImageUrl())
 				.account(memberSignupDto.getAccount())
 				.accountBank(memberSignupDto.getAccountBank())
 				.role(memberSignupDto.getRole())
@@ -53,13 +59,52 @@ public class MemberService {
 				.build();
 
 		member.setStudentStatus(member.getMemberId());
-
-		return memberRepository.save(member).getIdx();
+		memberRepository.save(member);
+		return  MemberTaskResultResponseDto.builder()
+				.idx(member.getIdx())
+				.nickName(member.getNickName())
+				.isSuccess(true)
+				.build();
 	}
 
 	public MemberInfoResponseDto getMyInfo() {
-		Member member = SecurityUtil.getLoginMember().orElseThrow(() -> new MemberHandler(ErrorStatus._UNAUTHORIZED));
+		Member member = SecurityUtil.getLoginMember().orElseThrow(() -> new ErrorHandler(ErrorStatus._UNAUTHORIZED));
 		return MemberDtoConverter.convertMemberToInfoResponseDto(member);
+	}
+
+	public ImageUriResponseDto getImage(ImageType imageType, Long idx) {
+		Member member = memberRepository.findByIdx(idx)
+				.orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+		List<Image> images = member.getImages();
+		if (images.isEmpty()) {
+			throw new ErrorHandler(ErrorStatus.IMAGE_NOT_FOUND);
+		}
+		for (Image x : images) {
+			if (x.getImageType() == imageType) {
+				return ImageUriResponseDto.builder()
+						.accessUri(x.getAccessUri())
+						.build();
+			}
+		}
+		return null;
+	}
+
+	public MemberInfoResponseDto updateMember(MemberUpdateDto updateDto) {
+		Member member = memberRepository.findByMemberId(updateDto.getMemberId())
+				.orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+		member.updateMember(updateDto);
+		return MemberDtoConverter.convertMemberToInfoResponseDto(member);
+	}
+
+	public MemberTaskResultResponseDto updatePassword(UpdatePasswordRequestDto requestDto) {
+		Member member = memberRepository.findByMemberId(requestDto.getMemberId())
+				.orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+		member.updatePassword(passwordEncoder().encode(requestDto.getPassword()));
+		return  MemberTaskResultResponseDto.builder()
+				.idx(member.getIdx())
+				.nickName(member.getNickName())
+				.isSuccess(true)
+				.build();
 	}
 
 	public boolean isExistByEmail(String email) {
@@ -70,7 +115,8 @@ public class MemberService {
 		return memberRepository.existsByNickName(nickName);
 	}
 
-	public void createException() {
-		throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+	public boolean isExistByMemberId(String memberId) {
+		return memberRepository.existsByMemberId(memberId);
 	}
+
 }

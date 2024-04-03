@@ -33,18 +33,31 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class OciUtilTest {
 
-	@Autowired
-	ObjectStorage objectStorage;
+	public ObjectStorage getClient() throws Exception {
+		ConfigFile config = ConfigFileReader.parse("~/.oci/config", "DEFAULT");
 
-	@Autowired
-	UploadManager uploadManager;
+		AuthenticationDetailsProvider provider = new ConfigFileAuthenticationDetailsProvider(config);
+
+		return ObjectStorageClient.builder()
+				.region(Region.AP_CHUNCHEON_1)
+				.build(provider);
+	}
+
+	public UploadManager getManager(ObjectStorage client) throws Exception {
+		UploadConfiguration configuration = UploadConfiguration.builder()
+				.allowMultipartUploads(true)
+				.allowParallelUploads(true)
+				.build();
+		return new UploadManager(client, configuration);
+	}
 
 	@Test
-	public void Test() throws IOException {
+	public void Test() throws Exception {
+		ObjectStorage client = getClient();
 		final String bucket = "RideTogetherHYU_Bucket";
 
 		System.out.println("Getting the namespace.");
-		GetNamespaceResponse namespaceResponse = objectStorage.getNamespace(GetNamespaceRequest.builder().build());
+		GetNamespaceResponse namespaceResponse = client.getNamespace(GetNamespaceRequest.builder().build());
 
 		String namespaceName = namespaceResponse.getValue();
 		System.out.println("namespaceName = " + namespaceName);
@@ -61,7 +74,7 @@ public class OciUtilTest {
 						.build();
 
 		System.out.println("Fetching bucket details");
-		GetBucketResponse response = objectStorage.getBucket(request);
+		GetBucketResponse response = client.getBucket(request);
 
 		System.out.println("Bucket Name : " + response.getBucket().getName());
 		System.out.println("Bucket Compartment : " + response.getBucket().getCompartmentId());
@@ -72,15 +85,18 @@ public class OciUtilTest {
 				"The Approximate total size of objects within this bucket : "
 						+ response.getBucket().getApproximateSize());
 
+		client.close();
 	}
 
 	@Test
 	public void UploadObjectTest() throws Exception {
+		ObjectStorage client = getClient();
+		UploadManager uploadManager = getManager(client);
 		String bucketName = "RideTogetherHYU_Bucket";
 		String namespaceName = "axjoaeuyezzj";
 		String objectName = "img/test.png";
 		Map<String, String> metadata = null;
-		String contentType = "image/png";
+		String contentType = "img/png";
 
 		String contentEncoding = null;
 		String contentLanguage = null;
@@ -105,7 +121,7 @@ public class OciUtilTest {
 		UploadResponse response = uploadManager.upload(uploadDetails);
 		System.out.println(response);
 
-		objectStorage.close();
+		client.close();
 	}
 
 	@Test
@@ -114,8 +130,7 @@ public class OciUtilTest {
 
 		AuthenticationDetailsProvider provider = new ConfigFileAuthenticationDetailsProvider(config);
 
-		ObjectStorage client = new ObjectStorageClient(provider);
-		client.setRegion(Region.AP_CHUNCHEON_1);
+		ObjectStorage client = getClient();
 		String bucketName = "RideTogetherHYU_Bucket";
 		String namespaceName = "axjoaeuyezzj";
 

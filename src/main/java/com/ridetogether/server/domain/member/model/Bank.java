@@ -1,6 +1,4 @@
-package com.ridetogether.server.domain.model;
-
-import static java.util.Locale.ENGLISH;
+package com.ridetogether.server.domain.member.model;
 
 import java.util.Arrays;
 

@@ -7,7 +7,7 @@ public class MemberResponseDto {
 
 	@Data
 	@Builder
-	public static class SignupResponseDto{
+	public static class MemberTaskResultResponseDto {
 		private Long idx;
 		private String nickName;
 		private Boolean isSuccess;
@@ -22,13 +22,17 @@ public class MemberResponseDto {
 		private String nickName;
 		private String email;
 		private String gender;
-		private String profileImgUrl;
 		private String account;
 		private String accountBank;
 		private String kakaoPayUrl;
-		private String kakaoQrImageUrl;
 		private String studentStatus;
 
+	}
+
+	@Data
+	@Builder
+	public static class IsDuplicatedDto {
+		private boolean isDuplicated;
 	}
 
 

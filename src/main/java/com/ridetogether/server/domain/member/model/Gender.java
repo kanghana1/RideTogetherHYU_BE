@@ -1,4 +1,4 @@
-package com.ridetogether.server.domain.model;
+package com.ridetogether.server.domain.member.model;
 
 import static java.util.Locale.ENGLISH;
 
