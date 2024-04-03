@@ -3,6 +3,7 @@ package com.ridetogether.server.domain.member.application;
 import static com.ridetogether.server.global.config.SecurityConfig.passwordEncoder;
 
 import com.ridetogether.server.domain.image.domain.Image;
+import com.ridetogether.server.domain.image.dto.ImageDto.ImageUriResponseDto;
 import com.ridetogether.server.domain.image.model.ImageType;
 import com.ridetogether.server.domain.member.converter.MemberDtoConverter;
 import com.ridetogether.server.domain.member.dao.MemberRepository;
@@ -65,8 +66,8 @@ public class MemberService {
 		return MemberDtoConverter.convertMemberToInfoResponseDto(member);
 	}
 
-	public String getImage(ImageType imageType) {
-		Member member = SecurityUtil.getLoginMember()
+	public ImageUriResponseDto getImage(ImageType imageType, Long idx) {
+		Member member = memberRepository.findByIdx(idx)
 				.orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 		List<Image> images = member.getImages();
 		if (images.isEmpty()) {
@@ -74,7 +75,9 @@ public class MemberService {
 		}
 		for (Image x : images) {
 			if (x.getImageType() == imageType) {
-				return x.getAccessUri();
+				return ImageUriResponseDto.builder()
+						.accessUri(x.getAccessUri())
+						.build();
 			}
 		}
 		return null;

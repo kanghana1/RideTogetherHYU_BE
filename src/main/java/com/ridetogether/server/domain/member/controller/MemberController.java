@@ -1,13 +1,12 @@
 package com.ridetogether.server.domain.member.controller;
 
 import com.ridetogether.server.domain.image.application.OracleImageService;
-import com.ridetogether.server.domain.image.domain.Image;
+import com.ridetogether.server.domain.image.dto.ImageDto.ImageUriResponseDto;
 import com.ridetogether.server.domain.image.model.ImageType;
 import com.ridetogether.server.domain.member.application.MemberService;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.domain.member.dto.MemberDto.MemberSignupDto;
 import com.ridetogether.server.domain.member.dto.MemberRequestDto.CreateMemberRequestDto;
-import com.ridetogether.server.domain.member.dto.MemberResponseDto.ImageResponseDto;
 import com.ridetogether.server.domain.member.dto.MemberResponseDto.IsDuplicatedDto;
 import com.ridetogether.server.domain.member.dto.MemberResponseDto.MemberInfoResponseDto;
 import com.ridetogether.server.domain.member.dto.MemberResponseDto.SignupResponseDto;
@@ -18,15 +17,13 @@ import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
 import com.ridetogether.server.global.security.application.JwtService;
 import com.ridetogether.server.global.util.SecurityUtil;
 import jakarta.validation.Valid;
-import java.io.File;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -65,52 +62,36 @@ public class MemberController {
 		return ApiResponse.onSuccess(memberInfoResponseDto);
 	}
 
-	@PostMapping(value = "/api/member/profile-img")
-	public ApiResponse<ImageResponseDto> uploadProfileImage(@RequestPart(value="image", required = true) MultipartFile image) throws Exception{
+	@PostMapping(value = "/api/member/image/{type}")
+	public ApiResponse<ImageUriResponseDto> uploadImage(@RequestPart(value="image", required = true) MultipartFile image,
+														@PathVariable("type") String type) throws Exception{
+		System.out.println("type = " + type);
+		ImageType imageType = ImageType.fromName(type);
 		Member loginMember = SecurityUtil.getLoginMember()
 				.orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-		Long imageIdx = oracleImageService.uploadProfileImg(image, loginMember.getIdx());
-		String accessUri = oracleImageService.getPublicImgUrl(imageIdx, loginMember.getIdx());
 
-		ImageResponseDto responseDto = ImageResponseDto.builder()
+		Long imageIdx;
+		if (imageType == ImageType.KAKAO) {
+			imageIdx = oracleImageService.uploadKakaoQrImg(image, loginMember.getIdx());
+		} else {
+			imageIdx = oracleImageService.uploadProfileImg(image, loginMember.getIdx());
+		}
+
+		String accessUri = oracleImageService.getPublicImgUrl(imageIdx, loginMember.getIdx());
+		ImageUriResponseDto responseDto = ImageUriResponseDto.builder()
 				.accessUri(accessUri)
 				.build();
-
 //		File convertFile = new File(System.getProperty("user.home") + "/rideTogetherDummy/" + image.getOriginalFilename());
 //		oracleImageService.removeNewFile(convertFile);
 		return ApiResponse.onSuccess(responseDto);
+
 	}
 
-	@PostMapping(value = "/api/member/kakao-img")
-	public ApiResponse<ImageResponseDto> uploadKakaoImage(@RequestPart(value="image", required = true) MultipartFile image) throws Exception{
+	@GetMapping("/api/member/image/{type}")
+	public ApiResponse<ImageUriResponseDto> getImage(@PathVariable("type") String type) throws Exception{
 		Member loginMember = SecurityUtil.getLoginMember()
 				.orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-		Long imageIdx = oracleImageService.uploadKakaoQrImg(image, loginMember.getIdx());
-		String accessUri = oracleImageService.getPublicImgUrl(imageIdx, loginMember.getIdx());
-
-		ImageResponseDto responseDto = ImageResponseDto.builder()
-				.accessUri(accessUri)
-				.build();
-
-		return ApiResponse.onSuccess(responseDto);
-	}
-
-	@GetMapping("/api/member/kakao-img")
-	public ApiResponse<ImageResponseDto> getKakaoImage() throws Exception{
-		String accessUri = memberService.getImage(ImageType.KAKAO);
-		ImageResponseDto responseDto = ImageResponseDto.builder()
-				.accessUri(accessUri)
-				.build();
-		return ApiResponse.onSuccess(responseDto);
-	}
-
-	@GetMapping("/api/member/profile-img")
-	public ApiResponse<ImageResponseDto> getProfileImage() throws Exception{
-		String accessUri = memberService.getImage(ImageType.PROFILE);
-		ImageResponseDto responseDto = ImageResponseDto.builder()
-				.accessUri(accessUri)
-				.build();
-		return ApiResponse.onSuccess(responseDto);
+		return ApiResponse.onSuccess(memberService.getImage(ImageType.fromName(type), loginMember.getIdx()));
 	}
 
 	@GetMapping("/api/member/isDuplicated")

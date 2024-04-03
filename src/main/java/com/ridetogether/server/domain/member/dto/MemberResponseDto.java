@@ -31,11 +31,6 @@ public class MemberResponseDto {
 
 	}
 
-	@Data
-	@Builder
-	public static class ImageResponseDto {
-		private String accessUri;
-	}
 
 	@Data
 	@Builder

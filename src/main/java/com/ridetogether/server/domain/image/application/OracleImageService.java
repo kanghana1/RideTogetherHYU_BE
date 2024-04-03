@@ -206,7 +206,7 @@ public class OracleImageService implements ImageService {
 		List<Image> images = member.getImages();
 		for (Image img : images) {
 			if (img.getImgUrl().equals(imgUrl)) {
-				img.updateAccessUri(request.getAccessUri());
+				img.updateAccessUri(DEFAULT_URI_PREFIX + request.getAccessUri());
 				img.updateParId(request.authenticateId);
 			}
 		}

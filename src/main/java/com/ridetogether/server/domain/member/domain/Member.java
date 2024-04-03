@@ -1,5 +1,6 @@
 package com.ridetogether.server.domain.member.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ridetogether.server.domain.image.domain.Image;
 import com.ridetogether.server.domain.member.model.ActiveState;
 import com.ridetogether.server.domain.member.model.Bank;
@@ -80,7 +81,8 @@ public class Member extends BaseTimeEntity {
 	@Column(length = 1000)
 	private String refreshToken;
 
-	@OneToMany
+	@OneToMany(mappedBy = "member")
+	@JsonIgnore
 	private List<Image> images;
 
 	public void updateRefreshToken(String refreshToken) {

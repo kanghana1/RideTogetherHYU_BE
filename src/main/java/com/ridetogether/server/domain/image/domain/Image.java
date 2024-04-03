@@ -3,6 +3,7 @@ package com.ridetogether.server.domain.image.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ridetogether.server.domain.image.model.ImageType;
 import com.ridetogether.server.domain.member.domain.Member;
+import com.ridetogether.server.global.common.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -26,7 +27,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "Image")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Image {
+public class Image extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,9 +36,9 @@ public class Image {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_idx")
-	@JsonIgnore
 	private Member member;
 
+	@Column(length = 1000)
 	private String accessUri;
 
 	private String imgUrl;
