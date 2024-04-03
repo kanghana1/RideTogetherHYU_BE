@@ -88,7 +88,8 @@ public class MemberService {
 		return memberRepository.existsByNickName(nickName);
 	}
 
-	public void createException() {
-		throw new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND);
+	public boolean isExistByMemberId(String memberId) {
+		return memberRepository.existsByMemberId(memberId);
 	}
+
 }

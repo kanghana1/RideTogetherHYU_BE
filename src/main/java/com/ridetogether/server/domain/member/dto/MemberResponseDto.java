@@ -37,6 +37,13 @@ public class MemberResponseDto {
 		private String accessUri;
 	}
 
+	@Data
+	@Builder
+	public static class IsDuplicatedDto {
+		private boolean isDuplicated;
+	}
+
+
 
 
 }

@@ -8,6 +8,7 @@ import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.domain.member.dto.MemberDto.MemberSignupDto;
 import com.ridetogether.server.domain.member.dto.MemberRequestDto.CreateMemberRequestDto;
 import com.ridetogether.server.domain.member.dto.MemberResponseDto.ImageResponseDto;
+import com.ridetogether.server.domain.member.dto.MemberResponseDto.IsDuplicatedDto;
 import com.ridetogether.server.domain.member.dto.MemberResponseDto.MemberInfoResponseDto;
 import com.ridetogether.server.domain.member.dto.MemberResponseDto.SignupResponseDto;
 import com.ridetogether.server.global.apiPayload.ApiResponse;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -109,6 +111,30 @@ public class MemberController {
 				.accessUri(accessUri)
 				.build();
 		return ApiResponse.onSuccess(responseDto);
+	}
+
+	@GetMapping("/api/member/isDuplicated")
+	public ApiResponse<IsDuplicatedDto> isDuplicated(@RequestParam(value = "memberId", required = false) String memberId,
+													 @RequestParam(value = "email", required = false) String email,
+													 @RequestParam(value = "nickName", required = false) String nickName) throws Exception {
+		IsDuplicatedDto isDuplicatedDto;
+		if (memberId != null) {
+			isDuplicatedDto = IsDuplicatedDto.builder()
+					.isDuplicated(memberService.isExistByMemberId(memberId))
+					.build();
+		} else if (email != null) {
+			isDuplicatedDto = IsDuplicatedDto.builder()
+					.isDuplicated(memberService.isExistByEmail(email))
+					.build();
+		} else if (nickName != null) {
+			isDuplicatedDto = IsDuplicatedDto.builder()
+					.isDuplicated(memberService.isExistByNickName(nickName))
+					.build();
+		} else {
+			throw new ErrorHandler(ErrorStatus._BAD_REQUEST);
+		}
+		return ApiResponse.onSuccess(isDuplicatedDto);
+
 	}
 
 }

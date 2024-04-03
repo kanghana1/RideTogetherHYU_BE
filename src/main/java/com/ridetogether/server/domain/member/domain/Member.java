@@ -37,6 +37,7 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "member_idx")
 	private Long idx;
 
+	@Column(nullable = false, unique = true)
 	private String memberId;
 
 	private String name;
