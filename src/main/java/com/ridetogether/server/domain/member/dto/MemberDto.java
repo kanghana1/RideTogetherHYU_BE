@@ -22,10 +22,21 @@ public class MemberDto {
 		private String nickName;
 		private Gender gender;
 		private String kakaoPayUrl;
-		private String kakaoQrImageUrl;
 		private String account;
 		private Bank accountBank;
 		private Role role;
+	}
+
+	@Builder
+	@Data
+	public static class MemberUpdateDto {
+		private String memberId;
+		private String name;
+		private String nickName;
+		private Gender gender;
+		private String kakaoPayUrl;
+		private String account;
+		private Bank accountBank;
 	}
 
 

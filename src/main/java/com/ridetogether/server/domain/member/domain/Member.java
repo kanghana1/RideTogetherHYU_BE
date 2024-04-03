@@ -2,6 +2,8 @@ package com.ridetogether.server.domain.member.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ridetogether.server.domain.image.domain.Image;
+import com.ridetogether.server.domain.member.dto.MemberDto.MemberUpdateDto;
+import com.ridetogether.server.domain.member.dto.MemberRequestDto.UpdateMemberRequestDto;
 import com.ridetogether.server.domain.member.model.ActiveState;
 import com.ridetogether.server.domain.member.model.Bank;
 import com.ridetogether.server.domain.member.model.Gender;
@@ -107,5 +109,14 @@ public class Member extends BaseTimeEntity {
 
 	public boolean isAdmin() {
 		return this.role == Role.ADMIN;
+	}
+
+	public void updateMember(MemberUpdateDto dto) {
+		this.name = dto.getName();
+		this.nickName = dto.getNickName();
+		this.gender = dto.getGender();
+		this.kakaoPayUrl = dto.getKakaoPayUrl();
+		this.account = dto.getAccount();
+		this.accountBank = dto.getAccountBank();
 	}
 }

@@ -19,7 +19,19 @@ public class MemberRequestDto {
 		private String nickName;
 		private String gender;
 		private String kakaoPayUrl;
-		private String kakaoQrImageUrl;
+		private String account;
+		private String accountBank;
+	}
+
+	@Builder
+	@Data
+	public static class UpdateMemberRequestDto {
+		private String memberId;
+		private String name;
+		private String email;
+		private String nickName;
+		private String gender;
+		private String kakaoPayUrl;
 		private String account;
 		private String accountBank;
 	}

@@ -22,11 +22,9 @@ public class MemberResponseDto {
 		private String nickName;
 		private String email;
 		private String gender;
-		private String profileImgUrl;
 		private String account;
 		private String accountBank;
 		private String kakaoPayUrl;
-		private String kakaoQrImageUrl;
 		private String studentStatus;
 
 	}

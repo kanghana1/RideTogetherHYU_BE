@@ -9,6 +9,7 @@ import com.ridetogether.server.domain.member.converter.MemberDtoConverter;
 import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.domain.member.dto.MemberDto.MemberSignupDto;
+import com.ridetogether.server.domain.member.dto.MemberDto.MemberUpdateDto;
 import com.ridetogether.server.domain.member.dto.MemberResponseDto.MemberInfoResponseDto;
 import com.ridetogether.server.domain.member.model.ActiveState;
 import com.ridetogether.server.domain.member.model.StudentStatus;
@@ -48,7 +49,6 @@ public class MemberService {
 				.nickName(memberSignupDto.getNickName())
 				.gender(memberSignupDto.getGender())
 				.kakaoPayUrl(memberSignupDto.getKakaoPayUrl())
-				.kakaoQrImageUrl(memberSignupDto.getKakaoQrImageUrl())
 				.account(memberSignupDto.getAccount())
 				.accountBank(memberSignupDto.getAccountBank())
 				.role(memberSignupDto.getRole())
@@ -81,6 +81,13 @@ public class MemberService {
 			}
 		}
 		return null;
+	}
+
+	public MemberInfoResponseDto updateMember(MemberUpdateDto updateDto) {
+		Member member = memberRepository.findByMemberId(updateDto.getMemberId())
+				.orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+		member.updateMember(updateDto);
+		return MemberDtoConverter.convertMemberToInfoResponseDto(member);
 	}
 
 	public boolean isExistByEmail(String email) {

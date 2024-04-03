@@ -7,6 +7,7 @@ import com.ridetogether.server.domain.member.application.MemberService;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.domain.member.dto.MemberDto.MemberSignupDto;
 import com.ridetogether.server.domain.member.dto.MemberRequestDto.CreateMemberRequestDto;
+import com.ridetogether.server.domain.member.dto.MemberRequestDto.UpdateMemberRequestDto;
 import com.ridetogether.server.domain.member.dto.MemberResponseDto.IsDuplicatedDto;
 import com.ridetogether.server.domain.member.dto.MemberResponseDto.MemberInfoResponseDto;
 import com.ridetogether.server.domain.member.dto.MemberResponseDto.SignupResponseDto;
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -116,6 +118,12 @@ public class MemberController {
 		}
 		return ApiResponse.onSuccess(isDuplicatedDto);
 
+	}
+
+	@PatchMapping("/api/member")
+	public ApiResponse<MemberInfoResponseDto> updateMember(@Valid @RequestBody UpdateMemberRequestDto requestDto) {
+		return ApiResponse.onSuccess(
+				memberService.updateMember(MemberDtoConverter.convertRequestToUpdateDto(requestDto)));
 	}
 
 }
