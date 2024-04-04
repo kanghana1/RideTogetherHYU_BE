@@ -117,14 +117,14 @@ public class OracleImageService implements ImageService {
 		AuthenticatedRequest authenticatedRequest = getPreAuth(img.getImgUrl());
 		
 		// 응답 로그
-		GetPreauthenticatedRequestRequest request =
-				GetPreauthenticatedRequestRequest.builder()
-						.namespaceName(BUCKET_NAME_SPACE)
-						.bucketName(BUCKET_NAME)
-						.parId(authenticatedRequest.getAuthenticateId())	//parId 필수
-						.build();
-		GetPreauthenticatedRequestResponse response = client.getPreauthenticatedRequest(request);
-		log.info("response = " + response);
+//		GetPreauthenticatedRequestRequest request =
+//				GetPreauthenticatedRequestRequest.builder()
+//						.namespaceName(BUCKET_NAME_SPACE)
+//						.bucketName(BUCKET_NAME)
+//						.parId(authenticatedRequest.getAuthenticateId())	//parId 필수
+//						.build();
+//		GetPreauthenticatedRequestResponse response = client.getPreauthenticatedRequest(request);
+//		log.info("response = " + response);
 
 		Member member = memberRepository.findByIdx(memberIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 		addAccessUriToMember(member, authenticatedRequest, img.getImgUrl());
@@ -162,20 +162,20 @@ public class OracleImageService implements ImageService {
 		ObjectStorage client = getClient();
 		UploadManager uploadManager = getManager(client);
 
-		String fileName = dirName + UUID.randomUUID() + uploadFile.getName();   // S3에 저장된 파일 이름
+		String fileName = dirName + UUID.randomUUID() + uploadFile.getName();   // 버킷에 저장된 파일 이름
 		String contentType = "img/" + fileName.substring(fileName.length() - 3); // PNG, JPG 만 가능함
-		String contentEncoding = null;
-		String contentLanguage = null;
-		Map<String, String> metadata = null;
+//		String contentEncoding = null;
+//		String contentLanguage = null;
+//		Map<String, String> metadata = null;
 		PutObjectRequest request =
 				PutObjectRequest.builder()
 						.bucketName(BUCKET_NAME)
 						.namespaceName(BUCKET_NAME_SPACE)
 						.objectName(fileName)
 						.contentType(contentType)
-						.contentLanguage(contentLanguage)
-						.contentEncoding(contentEncoding)
-						.opcMeta(metadata)
+//						.contentLanguage(contentLanguage)
+//						.contentEncoding(contentEncoding)
+//						.opcMeta(metadata)
 						.build();
 		UploadRequest uploadDetails =
 				UploadRequest.builder(uploadFile).allowOverwrite(true).build(request);

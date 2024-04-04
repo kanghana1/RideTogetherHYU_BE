@@ -57,11 +57,7 @@ public class Member extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
-	private String profileImageUrl;
-
 	private String kakaoPayUrl;
-
-	private String kakaoQrImageUrl;
 
 	private String account;
 
