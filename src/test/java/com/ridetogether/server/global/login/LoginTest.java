@@ -78,7 +78,6 @@ public class LoginTest {
 				.nickName("dh1010a")
 				.gender("male")
 				.kakaoPayUrl("www")
-				.kakaoQrImageUrl("www")
 				.account("100")
 				.accountBank("국민은행")
 				.build();

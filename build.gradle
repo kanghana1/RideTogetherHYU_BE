@@ -65,7 +65,6 @@ dependencies {
 	implementation 'com.oracle.oci.sdk:oci-java-sdk-common-httpclient:3.38.0'
 	implementation 'com.oracle.oci.sdk:oci-java-sdk-common-httpclient-choices:3.38.0'
 	implementation ('com.oracle.oci.sdk:oci-java-sdk-common-httpclient-jersey3:3.37.0')
-	implementation 'javax.ws.rs:javax.ws.rs-api:2.1.1'
 
 	//swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
