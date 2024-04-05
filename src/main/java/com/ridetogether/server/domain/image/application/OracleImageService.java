@@ -141,20 +141,24 @@ public class OracleImageService implements ImageService {
 
 	// 버킷에서 이미지와 인증정보 삭제
 	@Override
-	public void deleteImg(Image image) throws Exception {
+	public void deleteImg(Long idx) throws Exception {
 		ObjectStorage client = getClient();
+		Image img = imageRepository.findImageByIdx(idx).orElseThrow(
+				() -> new ErrorHandler(ErrorStatus.IMAGE_NOT_FOUND)
+		);
 		DeleteObjectRequest request =
 				DeleteObjectRequest.builder()
 						.bucketName(BUCKET_NAME)
 						.namespaceName(BUCKET_NAME_SPACE)
-						.objectName(image.getImgUrl())
+						.objectName(img.getImgUrl())
 						.build();
 
-		deletePreAuth(image.getParId());
-		imageRepository.delete(image);
+		deletePreAuth(img.getParId());
 
 		client.deleteObject(request);
 		client.close();
+
+		imageRepository.delete(img);
 	}
 
 	// 오라클 버킷으로 파일 업로드
