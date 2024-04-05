@@ -62,7 +62,6 @@ public class MemberController {
 	@PostMapping(value = "/api/member/image/{type}")
 	public ApiResponse<ImageUriResponseDto> uploadImage(@RequestPart(value="image", required = true) MultipartFile image,
 														@PathVariable("type") String type) throws Exception{
-		System.out.println("type = " + type);
 		ImageType imageType = ImageType.fromName(type);
 		Member loginMember = SecurityUtil.getLoginMember()
 				.orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -75,6 +74,9 @@ public class MemberController {
 		}
 
 		String accessUri = oracleImageService.getPublicImgUrl(imageIdx, loginMember.getIdx());
+
+		memberService.checkExistPrevImageAndDeletePrev(imageIdx, loginMember.getIdx(), imageType);
+
 		ImageUriResponseDto responseDto = ImageUriResponseDto.builder()
 				.accessUri(accessUri)
 				.build();

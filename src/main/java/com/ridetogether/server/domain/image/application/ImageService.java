@@ -13,6 +13,6 @@ public interface ImageService {
 
 	public MultipartFile downloadImg(Long imageIdx, Long memberIdx) throws Exception;
 
-	public void deleteImg(Image image) throws Exception;
+	public void deleteImg(Long imageIdx) throws Exception;
 
 }

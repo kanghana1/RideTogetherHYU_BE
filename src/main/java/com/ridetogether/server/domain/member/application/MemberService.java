@@ -2,6 +2,7 @@ package com.ridetogether.server.domain.member.application;
 
 import static com.ridetogether.server.global.config.SecurityConfig.passwordEncoder;
 
+import com.ridetogether.server.domain.image.application.ImageService;
 import com.ridetogether.server.domain.image.domain.Image;
 import com.ridetogether.server.domain.image.dto.ImageDto.ImageUriResponseDto;
 import com.ridetogether.server.domain.image.model.ImageType;
@@ -21,6 +22,7 @@ import com.ridetogether.server.global.security.application.JwtService;
 import com.ridetogether.server.global.util.SecurityUtil;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,11 +30,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtService jwtService;
+	private final ImageService imageService;
 
 	private static final String HANYANG_EMAIL = "@hanyang.ac.kr";
 
@@ -105,6 +109,22 @@ public class MemberService {
 				.nickName(member.getNickName())
 				.isSuccess(true)
 				.build();
+	}
+
+	public void checkExistPrevImageAndDeletePrev(Long imageIdx, Long memberIdx, ImageType type) throws Exception{
+		Member member = memberRepository.findByIdx(memberIdx)
+				.orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+		List<Image> images = member.getImages();
+		if (images.isEmpty()) {
+			return;
+		}
+		for (Image x : images) {
+			if (x.getImageType() == type && !x.getIdx().equals(imageIdx)) {
+				imageService.deleteImg(x.getIdx());
+				log.info("기존에 등록된 " + type + " 사진을 제거 완료하였습니다. ImageIdx = " + x.getIdx());
+			}
+		}
+
 	}
 
 	public boolean isExistByEmail(String email) {
