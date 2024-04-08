@@ -11,15 +11,8 @@ import com.ridetogether.server.domain.member.model.PayType;
 import com.ridetogether.server.domain.member.model.StudentStatus;
 import com.ridetogether.server.domain.member.model.Role;
 import com.ridetogether.server.global.common.BaseTimeEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -64,6 +57,7 @@ public class Member extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private Bank accountBank;
 
+	@ElementCollection
 	@Enumerated(EnumType.STRING)
 	private List<PayType> payTypes;
 
@@ -100,11 +94,11 @@ public class Member extends BaseTimeEntity {
 	}
 
 	public boolean isStudent() {
-		return this.role == Role.STUDENT;
+		return this.role == Role.ROLE_STUDENT;
 	}
 
 	public boolean isAdmin() {
-		return this.role == Role.ADMIN;
+		return this.role == Role.ROLE_ADMIN;
 	}
 
 	public void updateMember(MemberUpdateDto dto) {
