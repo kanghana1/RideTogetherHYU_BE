@@ -11,8 +11,8 @@ public class MailResponseDto {
         private String authNumber;
     }
 
-    @Builder
     @Data
+    @Builder
     public static class CheckMailResponseDto {
         private boolean isSuccess;
     }
