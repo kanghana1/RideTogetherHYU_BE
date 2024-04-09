@@ -39,7 +39,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 //@RequestMapping("/api/member")
-@Slf4j
 public class MemberController {
 
 	private final MemberService memberService;
