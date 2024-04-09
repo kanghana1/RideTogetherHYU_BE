@@ -46,13 +46,10 @@ public class Report {
     @Enumerated(EnumType.STRING)
     private HandleStatus handleStatus;
 
-    public void setReportTitle(String title) {
-        this.reportTitle = title;
+    public void setReportHandleStatus(HandleStatus handleStatus) {
+        this.handleStatus = handleStatus;
     }
 
-    public void setReportContent(String content) {
-        this.reportContent = content;
-    }
 
     public boolean isComplete() {
         return this.handleStatus == HandleStatus.COMPLETE;
