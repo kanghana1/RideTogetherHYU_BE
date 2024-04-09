@@ -28,6 +28,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseTimeEntity {
 
+	private static final String HANYANG_EMAIL = "@hanyang.ac.kr";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "member_idx")
@@ -86,7 +88,7 @@ public class Member extends BaseTimeEntity {
 	}
 
 	public void setStudentStatus(String memberId) {
-		if (memberId.contains("@hanyang.ac.kr")) {
+		if (memberId.contains(HANYANG_EMAIL)) {
 			this.studentStatus = StudentStatus.STUDENT;
 		} else {
 			this.studentStatus = StudentStatus.NOT_STUDENT;
@@ -112,6 +114,13 @@ public class Member extends BaseTimeEntity {
 
 	public void updatePassword(String password) {
 		this.password = password;
+	}
 
+	public void updateStudentStatus(StudentStatus studentStatus) {
+		this.studentStatus = studentStatus;
+	}
+
+	public void updateRole(Role role) {
+		this.role = role;
 	}
 }

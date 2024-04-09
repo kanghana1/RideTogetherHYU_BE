@@ -30,6 +30,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     //이메일 응답
     EMAIL_SEND_FAIL(HttpStatus.BAD_REQUEST, "EMAIL4001", "이메일 전송에 실패하였습니다."),
+    EMAIL_NOT_HANYANG_EMAIL(HttpStatus.BAD_REQUEST, "EMAIL4002", "한양대학교 이메일이 아닙니다."),
 
     //사진 응답
     IMAGE_UPLOAD_FAIL(HttpStatus.BAD_REQUEST, "IMG4001", "사진 업로드에 실패하였습니다."),

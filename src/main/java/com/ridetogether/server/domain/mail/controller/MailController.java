@@ -5,6 +5,7 @@ import com.ridetogether.server.domain.mail.dto.MailDto.CheckMailRequestDto;
 import com.ridetogether.server.domain.mail.dto.MailResponseDto;
 import com.ridetogether.server.domain.mail.dto.MailResponseDto.CheckMailResponseDto;
 import com.ridetogether.server.domain.mail.application.MailService;
+import com.ridetogether.server.domain.member.application.MemberService;
 import com.ridetogether.server.global.apiPayload.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class MailController {
 
     private final MailService mailService;
+    private final MemberService memberService;
 
 
     @PostMapping("/api/email/send")

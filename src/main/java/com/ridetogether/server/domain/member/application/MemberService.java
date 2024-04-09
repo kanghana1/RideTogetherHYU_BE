@@ -137,6 +137,10 @@ public class MemberService {
 
 	}
 
+	public void changeStudentStatus() {
+
+	}
+
 	public boolean isExistByEmail(String email) {
 		return memberRepository.existsByEmail(email);
 	}
