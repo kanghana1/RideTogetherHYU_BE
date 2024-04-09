@@ -137,8 +137,10 @@ public class MemberService {
 
 	}
 
-	public void changeStudentStatus() {
-
+	public void updateStudentStatusToStudent(Long memberIdx) {
+		Member member = memberRepository.findByIdx(memberIdx)
+				.orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+		member.updateStudentStatus(StudentStatus.STUDENT);
 	}
 
 	public boolean isExistByEmail(String email) {
