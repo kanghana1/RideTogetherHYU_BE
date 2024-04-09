@@ -1,6 +1,6 @@
 package com.ridetogether.server.domain.mail.application;
 
-import com.ridetogether.server.domain.mail.MailDtoConverter;
+import com.ridetogether.server.domain.mail.converter.MailDtoConverter;
 import com.ridetogether.server.domain.mail.dto.MailResponseDto.CheckMailResponseDto;
 import com.ridetogether.server.domain.mail.dto.MailResponseDto.SendMailResponseDto;
 import com.ridetogether.server.domain.member.application.MemberService;
@@ -11,7 +11,6 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -55,9 +54,6 @@ public class MailService {
     }
 
     public CheckMailResponseDto checkEmail(String email, String authNumber) {
-        if (memberService.isExistByEmail(email)) {
-            throw new ErrorHandler(ErrorStatus.MEMBER_EMAIL_ALREADY_EXIST);
-        }
         String data = redisUtil.getData(authNumber);
         if (data == null || !data.equals(email)) {
             return MailDtoConverter.convertCheckMailResultToDto(false);

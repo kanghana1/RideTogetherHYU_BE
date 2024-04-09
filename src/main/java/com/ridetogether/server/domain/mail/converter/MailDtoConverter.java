@@ -1,4 +1,4 @@
-package com.ridetogether.server.domain.mail;
+package com.ridetogether.server.domain.mail.converter;
 
 import com.ridetogether.server.domain.mail.dto.MailResponseDto.CheckMailResponseDto;
 import com.ridetogether.server.domain.mail.dto.MailResponseDto.SendMailResponseDto;
