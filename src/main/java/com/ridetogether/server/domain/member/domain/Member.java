@@ -2,6 +2,7 @@ package com.ridetogether.server.domain.member.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ridetogether.server.domain.image.domain.Image;
+import com.ridetogether.server.domain.matching.domain.MemberMatching;
 import com.ridetogether.server.domain.member.dto.MemberDto.MemberUpdateDto;
 import com.ridetogether.server.domain.member.dto.MemberRequestDto.UpdateMemberRequestDto;
 import com.ridetogether.server.domain.member.model.ActiveState;
@@ -78,6 +79,10 @@ public class Member extends BaseTimeEntity {
 	@OneToMany(mappedBy = "member")
 	@JsonIgnore
 	private List<Image> images;
+
+	@OneToMany(mappedBy = "membermatching")
+	@JsonIgnore
+	private List<MemberMatching> memberMatching;
 
 	public void updateRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
