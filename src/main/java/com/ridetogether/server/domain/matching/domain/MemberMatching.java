@@ -9,13 +9,12 @@ import lombok.*;
 @Getter
 @Builder
 @AllArgsConstructor
-@Table(name = "MemberMatching")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberMatching {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "memebermatching_idx")
+    @Column(name = "memberMatching_idx")
     private Long idx;
 
     @ManyToOne(fetch = FetchType.LAZY)
