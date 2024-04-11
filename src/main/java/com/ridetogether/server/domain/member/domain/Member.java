@@ -11,6 +11,7 @@ import com.ridetogether.server.domain.member.model.Gender;
 import com.ridetogether.server.domain.member.model.PayType;
 import com.ridetogether.server.domain.member.model.StudentStatus;
 import com.ridetogether.server.domain.member.model.Role;
+import com.ridetogether.server.domain.report.domain.Report;
 import com.ridetogether.server.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 
@@ -25,7 +26,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 @AllArgsConstructor
-@Table(name = "Member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseTimeEntity {
 
@@ -80,7 +80,12 @@ public class Member extends BaseTimeEntity {
 	@JsonIgnore
 	private List<Image> images;
 
-	@OneToMany(mappedBy = "membermatching")
+	@OneToMany(mappedBy = "reporter")
+	@JsonIgnore
+	private List<Report> reports;
+
+
+	@OneToMany(mappedBy = "member")
 	@JsonIgnore
 	private List<MemberMatching> memberMatching;
 

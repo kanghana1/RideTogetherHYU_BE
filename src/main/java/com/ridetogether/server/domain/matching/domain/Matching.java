@@ -15,7 +15,6 @@ import java.util.List;
 @Getter
 @Builder
 @AllArgsConstructor
-@Table(name = "Matching")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Matching extends BaseTimeEntity {
 
@@ -45,7 +44,7 @@ public class Matching extends BaseTimeEntity {
 
     private LocalDate expiredAt;
 
-    @OneToMany(mappedBy = "membermatching")
+    @OneToMany(mappedBy = "matching")
     @JsonIgnore
     private List<MemberMatching> memberMatching;
 

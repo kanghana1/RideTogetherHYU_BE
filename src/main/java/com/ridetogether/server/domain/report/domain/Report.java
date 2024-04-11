@@ -14,21 +14,20 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Entity
-@Table(name = "Report")
 public class Report {
 
     @Id
-    @Column(name = "report_id")
+    @Column(name = "report_idx")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
-    @ManyToOne(fetch = FetchType.LAZY) // ManyToMany? ManyToOne?
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_idx")
     private Member reporter;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_idx")
-    private Member reported;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "member_idx")
+//    private Member reported;
 
 
 //    private Post reportMatching;
@@ -37,7 +36,7 @@ public class Report {
 
     private String reportContent;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "report")
     @JsonIgnore
     private List<Image> images;
 
