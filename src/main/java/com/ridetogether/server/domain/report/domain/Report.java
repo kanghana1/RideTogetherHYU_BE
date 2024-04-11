@@ -50,6 +50,22 @@ public class Report {
         this.handleStatus = handleStatus;
     }
 
+    public void setReportTitle(String title) {
+        this.reportTitle = title;
+    }
+    public void setReportContent(String content) {
+        this.reportContent = content;
+    }
+
+    public void setImages(List<Image> imges) {
+        this.images = imges;
+    }
+
+    public void updateReport(Report report) {
+        this.setReportTitle(report.getReportTitle());
+        this.setReportContent(report.getReportContent());
+        this.setImages(report.getImages());
+    }
 
     public boolean isComplete() {
         return this.handleStatus == HandleStatus.COMPLETE;
