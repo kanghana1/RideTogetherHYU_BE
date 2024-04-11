@@ -28,6 +28,10 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_STATE_NOT_ADMIN(HttpStatus.FORBIDDEN, "MEMBER4007", "접근 권한이 없습니다"),
     MEMBER_LOGIN_NOT_SUPPORT(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "MEMBER4015", "지원되지 않는 로그인 형식입니다."),
 
+    //이메일 응답
+    EMAIL_SEND_FAIL(HttpStatus.BAD_REQUEST, "EMAIL4001", "이메일 전송에 실패하였습니다."),
+    EMAIL_NOT_HANYANG_EMAIL(HttpStatus.BAD_REQUEST, "EMAIL4002", "한양대학교 이메일이 아닙니다."),
+
     //사진 응답
     IMAGE_UPLOAD_FAIL(HttpStatus.BAD_REQUEST, "IMG4001", "사진 업로드에 실패하였습니다."),
     IMAGE_DOWNLOAD_FAIL(HttpStatus.NOT_FOUND, "IMG4002", "사진 다운로드에 실패하였습니다."),

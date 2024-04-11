@@ -48,7 +48,7 @@ public class UserReportService {
         // 여기도 나중에 매칭 넣기
         Report report = Report.builder()
                 .reporter(reportSaveDto.getReporter())
-                .reported(reportSaveDto.getReported())
+//                .reported(reportSaveDto.getReported())
                 .reportTitle(reportSaveDto.getReportTitle())
                 .reportContent(reportSaveDto.getReportContent())
                 .images(reportSaveDto.getImages())
@@ -75,7 +75,7 @@ public class UserReportService {
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.REPORT_NOT_FOUND));
 
         return ReportDetailInfoResponseDto.builder()
-                .reported(report.getReported())
+//                .reported(report.getReported())
                 .reportTitle(report.getReportTitle())
                 .reportContent(report.getReportContent())
                 .images(report.getImages())

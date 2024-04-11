@@ -16,6 +16,6 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     List<Report> findAllByReporter(Member member);
     List<Report> findAllByHandleStatus(HandleStatus handleStatus);
 
-    boolean existsByReport(Long idx);
+//    boolean existsByReport(Long idx);
 
 }
