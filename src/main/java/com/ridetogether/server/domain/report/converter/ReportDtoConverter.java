@@ -1,13 +1,8 @@
 package com.ridetogether.server.domain.report.converter;
 
-import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.domain.report.Model.IsReporter;
 import com.ridetogether.server.domain.report.domain.Report;
-import com.ridetogether.server.domain.report.dto.ReportDto;
-import com.ridetogether.server.domain.report.dto.ReportRequestDto;
-import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
-import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
 
 import static com.ridetogether.server.domain.report.dto.ReportDto.*;
 import static com.ridetogether.server.domain.report.dto.ReportRequestDto.*;
@@ -16,13 +11,22 @@ import static com.ridetogether.server.domain.report.dto.ReportResponseDto.*;
 public class ReportDtoConverter {
 
 
-    public static ReporterResponseDto reporterConverter(Member reporter) {
-        return ReporterResponseDto.builder()
-                .idx(reporter.getIdx())
-                .name(reporter.getName())
-                .memberId(reporter.getMemberId())
-                .role(reporter.getRole())
-                .isReporter(IsReporter.REPORTER)
+//    public static ReporterResponseDto reporterConverter(Member reporter) {
+//        return ReporterResponseDto.builder()
+//                .idx(reporter.getIdx())
+//                .name(reporter.getName())
+//                .memberId(reporter.getMemberId())
+//                .role(reporter.getRole())
+//                .isReporter(IsReporter.REPORTER)
+//                .build();
+//    }
+
+    public static ReportSimpleGetResponseDto convertReportToSimpleGetDto(Report report) {
+        return ReportSimpleGetResponseDto.builder()
+                .idx(report.getIdx())
+                .reportedId(report.getReportedMemberId())
+                .reportTitle(report.getReportTitle())
+                .handleStatus(report.getHandleStatus())
                 .build();
     }
 

@@ -2,18 +2,16 @@ package com.ridetogether.server.domain.report.controller;
 
 import com.ridetogether.server.domain.report.application.AdminReportService;
 import com.ridetogether.server.domain.report.application.UserReportService;
-import com.ridetogether.server.domain.report.converter.ReportDtoConverter;
-import com.ridetogether.server.domain.report.dto.ReportDto;
-import com.ridetogether.server.domain.report.dto.ReportRequestDto;
 import com.ridetogether.server.domain.report.dto.ReportResponseDto;
 import com.ridetogether.server.global.apiPayload.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+import static com.ridetogether.server.domain.report.converter.ReportDtoConverter.*;
 import static com.ridetogether.server.domain.report.dto.ReportDto.*;
 import static com.ridetogether.server.domain.report.dto.ReportRequestDto.*;
 import static com.ridetogether.server.domain.report.dto.ReportResponseDto.*;
@@ -40,10 +38,29 @@ public class ReportController {
      *
      */
 
+    @PostMapping()
+    @ResponseStatus(HttpStatus.OK)
     public ApiResponse<ReportDetailInfoResponseDto> reportUser(@Valid @RequestBody ReportUpdateRequestDto report) throws Exception {
-        ReportSaveDto reportSaveDto = ReportDtoConverter.convertRequestToSaveDto(report);
+        ReportSaveDto reportSaveDto = convertRequestToSaveDto(report);
         return ApiResponse.onSuccess(userReportService.saveReport(reportSaveDto));
     }
+
+    // 이렇게 ㄴ하는거 맞나
+    @GetMapping("/member_id={member_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<List<ReportSimpleGetResponseDto>> getMyReports(@PathVariable("memberId") String memberId) {
+
+        return ApiResponse.onSuccess(userReportService.getMyReports(memberId));
+    }
+
+    public ApiResponse<ReportDetailInfoResponseDto> getMyReportDetailInfo(Long reportIdx) {
+    }
+
+
+
+
+
+
 
 
 }

@@ -16,7 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.ridetogether.server.domain.report.converter.ReportDtoConverter.*;
 import static com.ridetogether.server.domain.report.dto.ReportDto.*;
@@ -62,14 +64,16 @@ public class UserReportService {
         return convertReportToDetailInfoDto(report);
     }
 
-     // 특정 멤버가 작성한 거 가져오고 싶은데 .... @백도현오빠
-    public List<Report> getMyReports(Member member) {
+    public List<ReportSimpleGetResponseDto> getMyReports(String memberId) {
+        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        List<Report> reportList = member.getReports();
+        List<ReportSimpleGetResponseDto> dtoList = new ArrayList<>();
 
-        List<Report> reportList = reportRepository.findAllByReporter(member);
         if (reportList.isEmpty()) {
             throw new ErrorHandler(ErrorStatus.REPORT_NOT_FOUND);
         }
-        return reportList;
+        reportList.forEach(report -> dtoList.add(ReportDtoConverter.convertReportToSimpleGetDto(report)));
+        return dtoList;
     }
 
     public ReportDetailInfoResponseDto getMyReportDetail(Long reportIdx) {
@@ -86,12 +90,12 @@ public class UserReportService {
 
     }
 
-    public ReportInfoResponseDto updateReport(Report updatedreport) {
+    public ReportUpdateResponseDto updateReport(Report updatedreport) {
         Report originReport = reportRepository.findByIdx(updatedreport.getIdx())
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.REPORT_NOT_FOUND));
 
         originReport.updateReport(updatedreport);
-        return ReportInfoResponseDto.builder()
+        return ReportUpdateResponseDto.builder()
                 .idx(originReport.getIdx())
                 .reportTitle(originReport.getReportTitle())
                 .reportContent(originReport.getReportContent())
