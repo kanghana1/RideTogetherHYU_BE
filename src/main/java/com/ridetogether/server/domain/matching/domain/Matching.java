@@ -23,9 +23,11 @@ public class Matching extends BaseTimeEntity {
     @Column(name = "matching_idx")
     private Long idx;
 
+    private Long hostMemberIdx;
+
     private String title;
 
-    private LocalDate ridingTime;
+    private String ridingTime;
 
     private int participantCount;
 
@@ -47,8 +49,5 @@ public class Matching extends BaseTimeEntity {
     @OneToMany(mappedBy = "matching")
     @JsonIgnore
     private List<MemberMatching> memberMatching;
-
-
-
 
 }

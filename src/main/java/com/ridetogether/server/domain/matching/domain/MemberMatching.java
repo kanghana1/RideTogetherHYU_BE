@@ -1,6 +1,5 @@
 package com.ridetogether.server.domain.matching.domain;
 
-import com.ridetogether.server.domain.matching.model.ParticipantStatus;
 import com.ridetogether.server.domain.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,6 +24,7 @@ public class MemberMatching {
     @JoinColumn(name = "matching_idx")
     private Matching matching;
 
-    @Enumerated(EnumType.STRING)
-    private ParticipantStatus participantStatus;
+//    @Enumerated(EnumType.STRING)
+//    private ParticipantStatus participantStatus;
+
 }
