@@ -29,7 +29,10 @@ public class Report {
 //    @JoinColumn(name = "member_idx")
 //    private Member reported;
 
+    private String reportedMemberId;
 
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "")
 //    private Post reportMatching;
 
     private String reportTitle;

@@ -3,6 +3,7 @@ package com.ridetogether.server.domain.report.application;
 import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.domain.report.Model.HandleStatus;
+import com.ridetogether.server.domain.report.converter.ReportDtoConverter;
 import com.ridetogether.server.domain.report.dao.ReportRepository;
 import com.ridetogether.server.domain.report.domain.Report;
 import com.ridetogether.server.domain.report.dto.ReportDto;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.ridetogether.server.domain.report.converter.ReportDtoConverter.*;
 import static com.ridetogether.server.domain.report.dto.ReportDto.*;
 import static com.ridetogether.server.domain.report.dto.ReportRequestDto.*;
 import static com.ridetogether.server.domain.report.dto.ReportResponseDto.*;
@@ -38,7 +40,7 @@ public class UserReportService {
      *
      */
 
-    public Report saveReport(ReportSaveDto reportSaveDto) {
+    public ReportDetailInfoResponseDto saveReport(ReportSaveDto reportSaveDto) {
         if (reportSaveDto.getReportTitle().isEmpty()) {
             throw new ErrorHandler(ErrorStatus.REPORT_TITLE_NULL);
         }
@@ -48,7 +50,7 @@ public class UserReportService {
         // 여기도 나중에 매칭 넣기
         Report report = Report.builder()
                 .reporter(reportSaveDto.getReporter())
-//                .reported(reportSaveDto.getReported())
+                .reportedMemberId(reportSaveDto.getReportedMemberId())
                 .reportTitle(reportSaveDto.getReportTitle())
                 .reportContent(reportSaveDto.getReportContent())
                 .images(reportSaveDto.getImages())
@@ -57,7 +59,7 @@ public class UserReportService {
 
         report.setReportHandleStatus(HandleStatus.WAITING);
         reportRepository.save(report);
-        return report;
+        return convertReportToDetailInfoDto(report);
     }
 
      // 특정 멤버가 작성한 거 가져오고 싶은데 .... @백도현오빠
@@ -75,7 +77,8 @@ public class UserReportService {
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.REPORT_NOT_FOUND));
 
         return ReportDetailInfoResponseDto.builder()
-//                .reported(report.getReported())
+                .reporter(report.getReporter())
+                .reportedId(report.getReportedMemberId())
                 .reportTitle(report.getReportTitle())
                 .reportContent(report.getReportContent())
                 .images(report.getImages())

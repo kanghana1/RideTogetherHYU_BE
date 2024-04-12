@@ -67,7 +67,7 @@ public class MemberController {
 		return ApiResponse.onSuccess(memberService.getAllMemberInfo());
 	}
 
-	@PostMapping(value = "/api/member/image/{type}")
+	@PostMapping(value = "/api/membegit pullr/image/{type}")
 	public ApiResponse<ImageUriResponseDto> uploadImage(@RequestPart(value="image", required = true) MultipartFile image,
 														@PathVariable("type") String type) throws Exception{
 		ImageType imageType = ImageType.fromName(type);

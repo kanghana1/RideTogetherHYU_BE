@@ -20,7 +20,7 @@ public class ReportDto {
     @Builder
     public static class ReportSaveDto {
         private Member reporter;
-        private Member reported;
+        private String reportedMemberId;
         private String reportTitle;
         private String reportContent;
 //        private Post reportMatching;
