@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 public class PostOneToOneChatRoomRequest {
     // 상대방
     @NotBlank(message = "상대방 아이디를 입력해주세요")
-    @Schema(description = "상 멤버", nullable = false)
+    @Schema(description = "상대 멤버", nullable = false)
     private Long anotherMemberIdx;
 }

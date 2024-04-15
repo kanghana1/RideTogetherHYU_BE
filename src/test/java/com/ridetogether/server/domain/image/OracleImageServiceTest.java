@@ -10,7 +10,7 @@
 //import com.ridetogether.server.domain.member.domain.Member;
 //import com.ridetogether.server.domain.member.dto.MemberRequestDto.CreateMemberRequestDto;
 //import com.ridetogether.server.domain.member.dto.MemberResponseDto.MemberTaskResultResponseDto;
-//import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
+//import com.ridetogether.server.global.apiPayload.code.chatStatus.ErrorStatus;
 //import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
 //import jakarta.persistence.EntityManager;
 //import java.io.File;
