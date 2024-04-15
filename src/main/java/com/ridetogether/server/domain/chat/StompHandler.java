@@ -1,5 +1,6 @@
 package com.ridetogether.server.domain.chat;
 
+import com.ridetogether.server.domain.chat.dao.RedisRepository;
 import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
@@ -13,10 +14,6 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-
-import java.util.Objects;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor

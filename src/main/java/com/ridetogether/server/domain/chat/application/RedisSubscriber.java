@@ -1,4 +1,4 @@
-package com.ridetogether.server.domain.chat;
+package com.ridetogether.server.domain.chat.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ridetogether.server.domain.chat.dto.UnreadMessageCount;

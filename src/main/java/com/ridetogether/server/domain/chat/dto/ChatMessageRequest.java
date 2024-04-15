@@ -20,7 +20,7 @@ public class ChatMessageRequest implements Serializable {
     }
 
     private Long messageIdx;
-    private String roomTitle; // 그룹채팅일 경우 스터디방 제목
+    private String roomTitle; // 그룹채팅일 경우 매칭 제목
     private MessageType type; // 메시지 타입
     private String nickName;
     private Long roomIdx; // 공통으로 만들어진 방 번호

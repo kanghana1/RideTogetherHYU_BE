@@ -1,6 +1,6 @@
 package com.ridetogether.server.global.config;
 
-import com.ridetogether.server.domain.chat.RedisSubscriber;
+import com.ridetogether.server.domain.chat.application.RedisSubscriber;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

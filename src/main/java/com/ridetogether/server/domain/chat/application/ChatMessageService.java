@@ -1,6 +1,6 @@
 package com.ridetogether.server.domain.chat.application;
 
-import com.ridetogether.server.domain.chat.RedisRepository;
+import com.ridetogether.server.domain.chat.dao.RedisRepository;
 import com.ridetogether.server.domain.chat.dao.ChatMessageRepository;
 import com.ridetogether.server.domain.chat.domain.ChatMessage;
 import com.ridetogether.server.domain.chat.dto.ChatMessageRequest;
@@ -12,9 +12,11 @@ import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
 import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.jvnet.hk2.annotations.Service;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -84,6 +86,33 @@ public class ChatMessageService {
             ChatMessageRequest messageRequest = new ChatMessageRequest(chatMessageRequest, unReadMessageCount);
 
             redisTemplate.convertAndSend(topic, messageRequest);
+        }
+    }
+
+    // 1:1 채팅, 그룹 채팅 알람 전송
+    public void sendChatAlarm(ChatMessageRequest chatMessageRequest) {
+        Set<Long> otherUserIds = chatMessageRequest.getOtherMemberIds();
+        Member member = memberRepository.findByIdx(chatMessageRequest.getMemberIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        otherUserIds.forEach(otherMemberIdx -> messageIfExistsOtherUser(chatMessageRequest, member, otherMemberIdx));
+    }
+
+    private void messageIfExistsOtherUser(ChatMessageRequest req, Member member, Long otherMemberIdx) {
+        // 채팅방에 받는 사람이 존재하지 않는다면
+        if (!redisRepository.existChatRoomUserInfo(otherMemberIdx) || !redisRepository.getUserEnterRoomId(otherMemberIdx).equals(req.getRoomIdx())) {
+            Member otherMember = memberRepository.findByIdx(otherMemberIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            String topic = channelTopic.getTopic();
+
+            // 그룹, 1:1채팅에 따라 제목 변경
+            System.out.println(member.getNickName());
+            String title = (req.getType() == ChatMessageRequest.MessageType.GROUP_TALK
+                    ? req.getRoomTitle() + "에서" : "") + member.getNickName() + "님이 메시지를 보냈습니다.";
+
+//            Alarm alarm = alarmRepository.save(Alarm.builder()
+//                    .title(title)
+//                    .url("chatURL")
+//                    .user(otherUser).build());
+
+//            redisTemplate.convertAndSend(topic, AlarmRequest.toDto(alarm, otherUserId));
         }
     }
 

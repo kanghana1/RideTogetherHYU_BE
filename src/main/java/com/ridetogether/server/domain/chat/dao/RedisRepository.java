@@ -1,4 +1,4 @@
-package com.ridetogether.server.domain.chat;
+package com.ridetogether.server.domain.chat.dao;
 
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
