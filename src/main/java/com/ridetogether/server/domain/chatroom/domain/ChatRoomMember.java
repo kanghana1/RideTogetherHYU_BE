@@ -1,5 +1,6 @@
-package com.ridetogether.server.domain.matching.domain;
+package com.ridetogether.server.domain.chatroom.domain;
 
+import com.ridetogether.server.domain.chat.model.ChatStatus;
 import com.ridetogether.server.domain.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,22 +10,28 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberMatching {
+public class ChatRoomMember {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "memberMatching_idx")
     private Long idx;
 
+    // 채팅방 주인
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_idx")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "matching_idx")
-    private Matching matching;
+    @JoinColumn(name = "chatRoom_idx")
+    private ChatRoom chatRoom;
 
-//    @Enumerated(EnumType.STRING)
-//    private ParticipantStatus participantStatus;
+    private String name;
+
+    @Enumerated(EnumType.STRING)
+    private ChatStatus status;
+
+    public void inActive() {
+        this.status = ChatStatus.INACTIVE;
+    }
 
 }

@@ -3,6 +3,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -15,10 +17,17 @@ public abstract class BaseTimeEntity {
 
 	@CreatedDate
 	@Column(updatable = false)
-	private LocalDate createdAt;
+	private LocalDateTime createdAt;
 
 	@LastModifiedDate
 	@Column(updatable = true)
-	private LocalDate lastModifiedAt;
+	private LocalDateTime lastModifiedAt;
 
+	void setCreatedAt(LocalDateTime now) {
+		this.createdAt = now;
+	}
+
+	void setLastModifiedAt(LocalDateTime lastModifiedAt) {
+		this.lastModifiedAt = lastModifiedAt;
+	}
 }

@@ -37,6 +37,12 @@ public enum ErrorStatus implements BaseErrorCode {
     IMAGE_DOWNLOAD_FAIL(HttpStatus.NOT_FOUND, "IMG4002", "사진 다운로드에 실패하였습니다."),
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "IMG4003", "사진 조회에 실패하였습니다."),
 
+    //채팅 응답
+    CHAT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "CHAT4001", "채팅방이 존재하지 않습니다."),
+
+    //매칭 응답
+    MATCHING_NOT_FOUND(HttpStatus.BAD_REQUEST, "MATCH4001", "매칭이 존재하지 않습니다."),
+
     // 신고 응답
     REPORT_NOT_FOUND(HttpStatus.BAD_REQUEST, "REPORT4001", "신고내역이 존재하지 않습니다."),
     REPORT_TITLE_NULL(HttpStatus.BAD_REQUEST, "REPORT4002", "신고제목을 작성해주세요."),
@@ -47,6 +53,7 @@ public enum ErrorStatus implements BaseErrorCode {
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;
+
 
     @Override
     public ErrorReasonDTO getReason() {
