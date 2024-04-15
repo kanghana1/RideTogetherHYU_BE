@@ -1,8 +1,10 @@
 package com.ridetogether.server.domain.report.application;
 
 import com.ridetogether.server.domain.report.Model.HandleStatus;
+import com.ridetogether.server.domain.report.converter.ReportDtoConverter;
 import com.ridetogether.server.domain.report.dao.ReportRepository;
 import com.ridetogether.server.domain.report.domain.Report;
+import com.ridetogether.server.domain.report.dto.ReportResponseDto;
 import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
 import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.ridetogether.server.domain.report.dto.ReportResponseDto.*;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +36,16 @@ public class AdminReportService {
     public List<Report> getAllCompleteReport() {
         return new ArrayList<>(reportRepository.findAllByHandleStatus(HandleStatus.COMPLETE));
     }
-    public List<Report> getAllWaitingReport() {
-        return new ArrayList<>(reportRepository.findAllByHandleStatus(HandleStatus.WAITING));
+    public List<ReportDetailInfoResponseDto> getAllWaitingReport() {
+        List<Report> allByHandleStatus = reportRepository.findAllByHandleStatus(HandleStatus.WAITING);
+        List<ReportDetailInfoResponseDto> lst = new ArrayList<>();
+        if (allByHandleStatus.isEmpty()) {
+            throw new ErrorHandler(ErrorStatus.REPORT_NOT_FOUND);
+        }
+        for (Report byHandleStatus : allByHandleStatus) {
+            lst.add(ReportDtoConverter.convertReportToDetailInfoDto(byHandleStatus));
+        }
+        return lst;
     }
     public List<Report> getAllCompanionReport() {
         return new ArrayList<>(reportRepository.findAllByHandleStatus(HandleStatus.COMPANION));

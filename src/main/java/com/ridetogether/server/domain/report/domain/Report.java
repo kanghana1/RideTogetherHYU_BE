@@ -22,9 +22,13 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_idx")
-    private Member reporter;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "member_idx")
+//    private Member reporter;
+
+    @OneToMany(mappedBy = "report")
+    @JsonIgnore
+    private List<ReportStatus> reportStatus;
 
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "member_idx")
@@ -32,9 +36,10 @@ public class Report {
 
     private String reportedMemberId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "matching_idx")
-    private Matching reportMatching;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "matching_idx")
+//    private Matching reportMatching;
+    private String reportMatchingId;
 
     private String reportTitle;
 
