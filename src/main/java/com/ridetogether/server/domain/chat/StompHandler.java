@@ -41,7 +41,7 @@ public class StompHandler implements ChannelInterceptor {
 
                 // 채팅방 퇴장 정보 저장
                 if(redisRepository.existChatRoomUserInfo(userIdx)) {
-                    redisRepository.exitUserEnterRoomId(userIdx);
+                    redisRepository.exitUserEnterRoomIdx(userIdx);
                 }
 
                 redisRepository.deleteMyInfo(sessionId);

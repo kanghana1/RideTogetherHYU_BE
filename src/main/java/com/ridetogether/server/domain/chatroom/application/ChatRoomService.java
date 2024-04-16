@@ -2,11 +2,13 @@ package com.ridetogether.server.domain.chatroom.application;
 
 import com.ridetogether.server.domain.chat.dao.ChatMessageRepository;
 import com.ridetogether.server.domain.chat.dao.RedisRepository;
+import com.ridetogether.server.domain.chat.domain.ChatMessage;
 import com.ridetogether.server.domain.chat.model.ChatStatus;
 import com.ridetogether.server.domain.chatroom.dao.ChatRoomMemberRepository;
 import com.ridetogether.server.domain.chatroom.dao.ChatRoomRepository;
 import com.ridetogether.server.domain.chatroom.domain.ChatRoom;
 import com.ridetogether.server.domain.chatroom.domain.ChatRoomMember;
+import com.ridetogether.server.domain.chatroom.dto.GetGroupChatRoomResponse;
 import com.ridetogether.server.domain.matching.dao.MatchingRepository;
 import com.ridetogether.server.domain.matching.dao.MemberMatchingRepository;
 import com.ridetogether.server.domain.matching.domain.Matching;
@@ -16,10 +18,13 @@ import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
 import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
+import com.ridetogether.server.global.util.TimeCalculator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 
@@ -123,6 +128,10 @@ public class ChatRoomService {
 
     }
 
+
+
+
+
     private int createRoomHashCode(Long memberIdx, Long anotherMemberIdx) {
         return memberIdx > anotherMemberIdx ? Objects.hash(memberIdx, anotherMemberIdx) : Objects.hash(anotherMemberIdx, memberIdx);
     }
@@ -190,5 +199,54 @@ public class ChatRoomService {
             return true;
         }
         return false;
+    }
+
+    public GetGroupChatRoomResponse getGroupChatRooms(Long memberIdx, Long matchingIdx) {
+        // 1. 매칭 존재 유무 체크
+        Member member = memberRepository.findByIdx(memberIdx)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Matching savedMatching = matchingRepository.findByIdx(matchingIdx)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MATCHING_NOT_FOUND));
+
+        // 2. 해당 매칭에 유저가 포함되어있는지 체크
+        boolean check = false;
+        List<MemberMatching> memberMatchings = memberMatchingRepository.findAllByMatching(savedMatching);
+        for (MemberMatching memberMatching : memberMatchings) {
+            if (memberMatching.getMember().getIdx().equals(member.getIdx())) {
+                check = true;
+                break;
+            }
+        }
+
+        if(!check) throw new ErrorHandler(ErrorStatus.MEMBER_NOT_IN_MATCHING);
+
+        ChatRoom chatRoom= chatRoomRepository.findByMatchingAndChatStatus(savedMatching ,ChatStatus.ACTIVE)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.CHAT_ROOM_NOT_FOUND));
+        return convertToGetGroupRoomResponse(chatRoom);
+
+    }
+
+    public GetGroupChatRoomResponse convertToGetGroupRoomResponse(ChatRoom chatRoom) {
+        GetGroupChatRoomResponse responseDto = GetGroupChatRoomResponse.builder()
+                .chatRoomIdx(chatRoom.getIdx())
+                .chatRoomName(chatRoom.getIdx().toString())
+                .build();
+
+        List<ChatMessage> chatMessages = chatMessageRepository
+                .findAllByChatStatusAndChatRoomIdxOrderByCreatedAtAsc(ChatStatus.ACTIVE, chatRoom.getIdx());
+
+        LocalDateTime lastTime;
+        if (chatMessages == null || chatMessages.isEmpty()) {
+            responseDto.setLastMessage("채팅방이 생성되었습니다!");
+            lastTime = LocalDateTime.now();
+        } else {
+            responseDto.setLastMessage(chatMessages.get(0).getMessage());
+            lastTime = chatMessages.get(0).getCreatedAt();
+        }
+        long dayBeforeTime = ChronoUnit.MINUTES.between(lastTime, LocalDateTime.now());
+        String dayBefore = TimeCalculator.time(dayBeforeTime);
+        responseDto.setDayBefore(dayBefore);
+
+        return responseDto;
     }
 }

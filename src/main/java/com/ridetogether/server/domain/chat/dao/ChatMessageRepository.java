@@ -2,11 +2,12 @@ package com.ridetogether.server.domain.chat.dao;
 
 import com.ridetogether.server.domain.chat.domain.ChatMessage;
 import com.ridetogether.server.domain.chat.model.ChatStatus;
+import com.ridetogether.server.domain.chatroom.domain.ChatRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
 
-    List<ChatMessage> findAllByStatusAndChatRoomIdxOrderByCreatedAtAsc(ChatStatus active, Long id);
+    List<ChatMessage> findAllByChatStatusAndChatRoomIdxOrderByCreatedAtAsc(ChatStatus active, Long chatRoomIdx);
 }

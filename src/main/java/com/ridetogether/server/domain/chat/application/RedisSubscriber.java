@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 public class RedisSubscriber implements MessageListener {
     private final ObjectMapper objectMapper;
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final SimpMessageSendingOperations messagingTemplate;
 
     /**
@@ -39,9 +39,9 @@ public class RedisSubscriber implements MessageListener {
                 if (roomMessage.getType().equals(ChatMessageRequest.MessageType.UNREAD_MESSAGE_COUNT_ALARM)) {
                     // 안 읽은 메세지일 경우
                     UnreadMessageCount messageCount = new UnreadMessageCount(roomMessage);
-                    Long otherUserId = roomMessage.getOtherMemberIds().stream().collect(Collectors.toList()).get(0);
+                    Long otherMemberIdx = roomMessage.getOtherMemberIds().stream().toList().get(0);
                     // Websocket 구독자에게 안읽은 메세지 반환
-                    messagingTemplate.convertAndSend("/sub/chat/unread/" + otherUserId, messageCount);
+                    messagingTemplate.convertAndSend("/sub/chat/unread/" + otherMemberIdx, messageCount);
                 } else {
                     // 그룹채팅이거나 일대일 채팅일 경우
                     ChatMessageResponse chatMessageResponse = new ChatMessageResponse(roomMessage);

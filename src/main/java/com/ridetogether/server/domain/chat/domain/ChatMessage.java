@@ -28,5 +28,5 @@ public class ChatMessage extends BaseTimeEntity {
     private ChatRoom chatRoom;
 
     @Enumerated(EnumType.STRING)
-    private ChatStatus status;
+    private ChatStatus chatStatus;
 }

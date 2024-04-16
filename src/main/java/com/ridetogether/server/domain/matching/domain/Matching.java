@@ -1,6 +1,7 @@
 package com.ridetogether.server.domain.matching.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ridetogether.server.domain.chatroom.domain.ChatRoom;
 import com.ridetogether.server.domain.matching.model.MatchingStatus;
 import com.ridetogether.server.domain.member.model.Gender;
 import com.ridetogether.server.domain.member.model.PayType;
@@ -43,6 +44,10 @@ public class Matching extends BaseTimeEntity {
     @ElementCollection
     @Enumerated(EnumType.STRING)
     private List<PayType> payTypes;
+
+    @OneToOne
+    @JoinColumn(name = "chatRoom_idx")
+    private ChatRoom chatRoom;
 
     private LocalDate expiredAt;
 

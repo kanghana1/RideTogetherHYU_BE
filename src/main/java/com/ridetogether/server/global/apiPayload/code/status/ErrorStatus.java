@@ -27,6 +27,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_STATE_NOT_STUDENT(HttpStatus.BAD_REQUEST, "MEMBER4006", "한양대학교 학생 인증이 미완료된 사용자입니다."),
     MEMBER_STATE_NOT_ADMIN(HttpStatus.FORBIDDEN, "MEMBER4007", "접근 권한이 없습니다"),
     MEMBER_LOGIN_NOT_SUPPORT(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "MEMBER4015", "지원되지 않는 로그인 형식입니다."),
+    MEMBER_NOT_IN_MATCHING(HttpStatus.BAD_REQUEST, "MEMBER4008", "매칭에 참여하지 않은 사용자입니다."),
 
     //이메일 응답
     EMAIL_SEND_FAIL(HttpStatus.BAD_REQUEST, "EMAIL4001", "이메일 전송에 실패하였습니다."),

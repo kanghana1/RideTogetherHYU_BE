@@ -4,6 +4,7 @@ import com.ridetogether.server.domain.chat.dao.RedisRepository;
 import com.ridetogether.server.domain.chat.dao.ChatMessageRepository;
 import com.ridetogether.server.domain.chat.domain.ChatMessage;
 import com.ridetogether.server.domain.chat.dto.ChatMessageRequest;
+import com.ridetogether.server.domain.chat.model.ChatStatus;
 import com.ridetogether.server.domain.chatroom.dao.ChatRoomRepository;
 import com.ridetogether.server.domain.chatroom.domain.ChatRoom;
 import com.ridetogether.server.domain.member.dao.MemberRepository;
@@ -23,7 +24,7 @@ import java.util.Set;
 public class ChatMessageService {
 
     private final RedisRepository redisRepository;
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final ChannelTopic channelTopic;
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
@@ -35,7 +36,7 @@ public class ChatMessageService {
         // 그룹채팅은 해시코드가 존재 x, 일대일 채팅은 해시코드가 존재.
         ChatRoom chatRoom = chatRoomRepository.findByIdx(chatRoomIdx)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.CHAT_ROOM_NOT_FOUND));
-        redisRepository.userEnterRoomInfo(memberIdx, chatRoomIdx);
+        redisRepository.memberEnterRoomInfo(memberIdx, chatRoomIdx);
         if (chatRoom.getRoomHashCode() != 0) {
             redisRepository.initChatRoomMessageInfo(chatRoomIdx+"", memberIdx);
         }
@@ -51,12 +52,13 @@ public class ChatMessageService {
                 .chatRoom(chatRoom)
                 .member(member)
                 .message(chatMessageRequest.getMessage())
+                .chatStatus(ChatStatus.ACTIVE)
                 .build();
 
         chatMessageRepository.save(chatMessage);
         String topic = channelTopic.getTopic();
 
-        // ChatMessageRequest에 유저정보, 현재시간 저장
+        // ChatMessageRequest 에 유저정보, 현재시간 저장
         chatMessageRequest.setNickName(member.getNickName());
         chatMessageRequest.setMemberIdx(member.getIdx());
 
@@ -76,7 +78,7 @@ public class ChatMessageService {
         Long otherMemberIdx = chatMessageRequest.getOtherMemberIds().stream().toList().get(0);
         String roomIdx = String.valueOf(chatMessageRequest.getRoomIdx());
 
-        if (!redisRepository.existChatRoomUserInfo(otherMemberIdx) || !redisRepository.getUserEnterRoomId(otherMemberIdx).equals(chatMessageRequest.getRoomIdx())) {
+        if (!redisRepository.existChatRoomMemberInfo(otherMemberIdx) || !redisRepository.getMemberEnterRoomIdx(otherMemberIdx).equals(chatMessageRequest.getRoomIdx())) {
 
             redisRepository.addChatRoomMessageCount(roomIdx, otherMemberIdx);
             int unReadMessageCount = redisRepository.getChatRoomMessageCount(roomIdx+"", otherMemberIdx);
@@ -98,7 +100,7 @@ public class ChatMessageService {
 
     private void messageIfExistsOtherUser(ChatMessageRequest req, Member member, Long otherMemberIdx) {
         // 채팅방에 받는 사람이 존재하지 않는다면
-        if (!redisRepository.existChatRoomUserInfo(otherMemberIdx) || !redisRepository.getUserEnterRoomId(otherMemberIdx).equals(req.getRoomIdx())) {
+        if (!redisRepository.existChatRoomMemberInfo(otherMemberIdx) || !redisRepository.getMemberEnterRoomIdx(otherMemberIdx).equals(req.getRoomIdx())) {
             Member otherMember = memberRepository.findByIdx(otherMemberIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
             String topic = channelTopic.getTopic();
 

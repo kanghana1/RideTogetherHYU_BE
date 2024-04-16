@@ -49,27 +49,27 @@ public class RedisRepository {
 
     // step1
     // 유저가 입장한 채팅방ID와 유저 세션ID 맵핑 정보 저장
-    public void userEnterRoomInfo(Long userId, Long chatRoomId) {
-        chatRoomInfo.put(ENTER_INFO, userId, chatRoomId);
+    public void memberEnterRoomInfo(Long memberIdx, Long chatRoomId) {
+        chatRoomInfo.put(ENTER_INFO, memberIdx, chatRoomId);
     }
 
     // 사용자가 채팅방에 입장해 있는지 확인
-    public boolean existChatRoomUserInfo(Long userId) {
-        return chatRoomInfo.hasKey(ENTER_INFO, userId);
+    public boolean existChatRoomMemberInfo(Long memberIdx) {
+        return chatRoomInfo.hasKey(ENTER_INFO, memberIdx);
     }
 
     // 사용자가 특정 채팅방에 입장해 있는지 확인
     public boolean existUserRoomInfo(Long chatRoomId, Long userId) {
-        return getUserEnterRoomId(userId).equals(chatRoomId);
+        return getMemberEnterRoomIdx(userId).equals(chatRoomId);
     }
 
     // 사용자가 입장해 있는 채팅방 ID 조회
-    public Long getUserEnterRoomId(Long userId) {
-        return chatRoomInfo.get(ENTER_INFO, userId);
+    public Long getMemberEnterRoomIdx(Long memberIdx) {
+        return chatRoomInfo.get(ENTER_INFO, memberIdx);
     }
 
     // 사용자가 입장해 있는 채팅방 ID 조회
-    public void exitUserEnterRoomId(Long userId) {
+    public void exitUserEnterRoomIdx(Long userId) {
         chatRoomInfo.delete(ENTER_INFO, userId);
     }
 
