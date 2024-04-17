@@ -1,6 +1,7 @@
 package com.ridetogether.server.global.config;
 
 import com.ridetogether.server.domain.chat.application.RedisSubscriber;
+import com.ridetogether.server.domain.chat.dto.ChatMessageDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,12 +23,15 @@ public class RedisConfig {
     redis의 pub/sub 기능을 이용하기 위해 MessageListener 설정 추가
     메시지 발행이 오면 Listener가 처리함
      */
-    @Value("${spring.redis.host}")
+    @Value("${spring.data.redis.host}")
     private String redisHost;
 
-    @Value("${spring.redis.port}")
+    @Value("${spring.data.redis.port}")
     private int redisPort;
 
+    /*
+    Redis 서버와의 연결을 생성하고 관리하는 데 사용
+    */
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         return new LettuceConnectionFactory(redisHost, redisPort);
@@ -35,14 +39,11 @@ public class RedisConfig {
 
     @Bean
     public RedisMessageListenerContainer redisMessageListenerContainer(
-            RedisConnectionFactory connectionFactory,
-            MessageListenerAdapter listenerAdapter,
-            ChannelTopic channelTopic
+            RedisConnectionFactory connectionFactory
     ) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        // RedisMessageListenerContainer 에 사용할 Redis 연결 팩토리(RedisConnectionFactory)를 설정
         container.setConnectionFactory(connectionFactory);
-        // RedisMessageListenerContainer 에 Bean 으로 등록한 listenerAdapter, channelTopic 추가
-        container.addMessageListener(listenerAdapter, channelTopic);
         return container;
     }
 
@@ -59,22 +60,25 @@ public class RedisConfig {
     }
 
     /*
+    채팅 데이터(ChatMessageDto)를 저장할 때 사용할 RedisTemplate을 설정
+    키는 문자열로 직렬화하고, 값은 ChatMessageDto 객체를 JSON 형식으로 직렬화
+     */
+    @Bean
+    public RedisTemplate<String, ChatMessageDto> redisTemplateForChatDto(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, ChatMessageDto> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(connectionFactory);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatMessageDto.class)); // ChatDto 클래스를 직렬화
+        return redisTemplate;
+    }
+
+    /*
       실제 메시지를 처리하는 subscriber 설정 추가
       sendMessage 라는 메소드가 -> RedisSubscriber 클래스 안에 오버라이딩 된 onMessage 로 처리하도록 함
      */
     @Bean
     public MessageListenerAdapter listenerAdapter(RedisSubscriber subscriber) {
         return new MessageListenerAdapter(subscriber, "sendMessage");
-    }
-
-    /*
-      단일 Topic 사용을 위한 Bean 설정
-      사실 중요한 부분인지 모르겠음
-      계속해서 생성할 필요가 없어 보여 빈으로 등록함
-     */
-    @Bean
-    public ChannelTopic channelTopic() {
-        return new ChannelTopic("chatroom");
     }
 
 

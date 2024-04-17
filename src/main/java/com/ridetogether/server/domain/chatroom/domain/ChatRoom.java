@@ -1,5 +1,6 @@
 package com.ridetogether.server.domain.chatroom.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ridetogether.server.domain.chat.domain.ChatMessage;
 import com.ridetogether.server.domain.chat.model.ChatStatus;
 import com.ridetogether.server.domain.matching.domain.Matching;
@@ -9,29 +10,29 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatRoom extends BaseTimeEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
-    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.REMOVE)
+    private Long chatRoomId;
+
+    private int userCount;
+
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnore
     private List<ChatMessage> chatMessages = new ArrayList<>();
-
-    // 특정 다른 유저와 해당 유저의 채팅방 값
-    // 그룹 채팅 시 0
-    private int roomHashCode;
-
-    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.REMOVE)
-    private List<ChatRoomMember> chatRoomMembers;
 
     @OneToOne
     @JoinColumn(name = "matching_idx")
@@ -47,6 +48,14 @@ public class ChatRoom extends BaseTimeEntity implements Serializable {
     public ChatRoom inActive() {
         this.chatStatus = ChatStatus.INACTIVE;
         return this;
+    }
+
+    public void plusUserCount() {
+        this.userCount++;
+    }
+
+    public void minusUserCount() {
+        this.userCount--;
     }
 
 
