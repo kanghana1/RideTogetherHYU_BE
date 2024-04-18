@@ -2,8 +2,10 @@ package com.ridetogether.server.domain.chatroom.application;
 
 import com.ridetogether.server.domain.chat.application.RedisSubscriber;
 import com.ridetogether.server.domain.chat.model.ChatStatus;
+import com.ridetogether.server.domain.chatroom.converter.ChatRoomDtoConverter;
 import com.ridetogether.server.domain.chatroom.dao.ChatRoomRepository;
 import com.ridetogether.server.domain.chatroom.domain.ChatRoom;
+import com.ridetogether.server.domain.chatroom.dto.ChatRoomResponseDto;
 import com.ridetogether.server.domain.matching.dao.MatchingRepository;
 import com.ridetogether.server.domain.matching.domain.Matching;
 import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
@@ -22,6 +24,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.ridetogether.server.domain.chatroom.dto.ChatRoomResponseDto.*;
 
 @Service
 @Slf4j
@@ -69,7 +73,7 @@ public class ChatRoomService {
     /**
      * 채팅방 생성 : 서버간 채팅방 공유를 위해 redis hash에 저장한다.
      */
-    public Long createChatRoom(Long chatRoomId, Long memberIdx) {
+    public CreateChatRoomResponseDto createChatRoom(Long chatRoomId, Long memberIdx) {
         Matching matching = matchingRepository.findByIdx(chatRoomId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MATCHING_NOT_FOUND));
 
         if (chatRoomRepository.existsByChatRoomId(chatRoomId)) {
@@ -84,7 +88,7 @@ public class ChatRoomService {
             chatRoomRepository.save(chatRoom);
             enterChatRoom(memberIdx, chatRoomId);
             log.info("채팅방 생성 : {} 번 방", chatRoomId);
-            return chatRoom.getChatRoomId();
+            return ChatRoomDtoConverter.convertToCreateChatRoomResponseDto(chatRoom);
         }
 
     }

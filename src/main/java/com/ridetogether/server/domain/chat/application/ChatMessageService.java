@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -75,49 +76,21 @@ public class ChatMessageService {
         }
     }
 
-    //안읽은 메세지 업데이트
-    private void updateUnReadMessageCount(ChatMessageDto chatMessageDto) {
-        Long otherMemberIdx = chatMessageDto.getOtherMemberIds().stream().toList().get(0);
-        String roomIdx = String.valueOf(chatMessageDto.getRoomIdx());
+    // 대화 저장
+    public void saveMessage(ChatMessageDto chatMessageDto) {
+        ChatRoom room = chatRoomRepository.findByRoomId(chatMessageDto.getRoomId());
+        // DB 저장
+        ChatMessage chatMessage = new ChatMessage(chatMessageDto.getSender(),
+                chatMessageDto.getMessage(), chatMessageDto.getS3DataUrl(), room, chatMessageDto.getRoomId(), chatDto.getFileName(), chatDto.getFileDir());
+        chatMessageRepository.save(chatMessage);
 
-        if (!redisRepository.existChatRoomMemberInfo(otherMemberIdx) || !redisRepository.getMemberEnterRoomIdx(otherMemberIdx).equals(chatMessageDto.getRoomIdx())) {
+        // 1. 직렬화
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatMessage.class));
 
-            redisRepository.addChatRoomMessageCount(roomIdx, otherMemberIdx);
-            int unReadMessageCount = redisRepository.getChatRoomMessageCount(roomIdx+"", otherMemberIdx);
+        // 2. redis 저장
+        redisTemplate.opsForList().rightPush(chatMessageDto.getRoomIdx(), chatMessageDto);
 
-            String topic = channelTopic.getTopic();
-
-            ChatMessageDto messageRequest = new ChatMessageDto(chatMessageDto, unReadMessageCount);
-
-            redisTemplate.convertAndSend(topic, messageRequest);
-        }
+        // 3. expire 을 이용해서, Key 를 만료시킬 수 있음
+        redisTemplate.expire(chatDto.getRoomId(), 1, TimeUnit.MINUTES);
     }
-
-    // 1:1 채팅, 그룹 채팅 알람 전송
-    public void sendChatAlarm(ChatMessageDto chatMessageDto) {
-        Set<Long> otherUserIds = chatMessageDto.getOtherMemberIds();
-        Member member = memberRepository.findByIdx(chatMessageDto.getMemberIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        otherUserIds.forEach(otherMemberIdx -> messageIfExistsOtherUser(chatMessageDto, member, otherMemberIdx));
-    }
-
-    private void messageIfExistsOtherUser(ChatMessageDto req, Member member, Long otherMemberIdx) {
-        // 채팅방에 받는 사람이 존재하지 않는다면
-        if (!redisRepository.existChatRoomMemberInfo(otherMemberIdx) || !redisRepository.getMemberEnterRoomIdx(otherMemberIdx).equals(req.getRoomIdx())) {
-            Member otherMember = memberRepository.findByIdx(otherMemberIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-            String topic = channelTopic.getTopic();
-
-            // 그룹, 1:1채팅에 따라 제목 변경
-            System.out.println(member.getNickName());
-            String title = (req.getType() == ChatMessageDto.MessageType.GROUP_TALK
-                    ? req.getRoomTitle() + "에서" : "") + member.getNickName() + "님이 메시지를 보냈습니다.";
-
-//            Alarm alarm = alarmRepository.save(Alarm.builder()
-//                    .title(title)
-//                    .url("chatURL")
-//                    .user(otherUser).build());
-
-//            redisTemplate.convertAndSend(topic, AlarmRequest.toDto(alarm, otherUserId));
-        }
-    }
-
 }

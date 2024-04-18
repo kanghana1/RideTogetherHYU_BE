@@ -14,4 +14,14 @@ public class ChatRoomResponseDto {
         private Long matchingIdx;
         private String matchingTitle;
     }
+
+    @Builder
+    @Data
+    public static class CreateChatRoomResponseDto {
+        private Long idx;
+        private Long chatRoomId;
+        private Long matchingIdx;
+        private String matchingTitle;
+        private boolean isSuccess;
+    }
 }
