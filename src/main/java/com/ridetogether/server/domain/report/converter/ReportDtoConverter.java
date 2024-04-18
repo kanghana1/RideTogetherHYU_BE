@@ -43,7 +43,7 @@ public class ReportDtoConverter {
     public static ReportSaveDto convertRequestToSaveDto(ReportUpdateRequestDto saveReport) {
         return ReportSaveDto.builder()
                 .reporter(saveReport.getReporter())
-//                .reportedMemberId(saveReport.getReported())
+                .reportedMemberId(saveReport.getReportedMemberId())
                 .reportTitle(saveReport.getReportTitle())
                 .reportContent(saveReport.getReportContent())
                 .images(saveReport.getImages())
@@ -53,7 +53,7 @@ public class ReportDtoConverter {
     public static ReportDetailInfoResponseDto convertReportToDetailInfoDto(Report report) {
         return ReportDetailInfoResponseDto.builder()
                 .idx(report.getIdx())
-//                .reporter(report.getReporter())
+                .reporter(report.getReporter())
                 .reportedId(report.getReportedMemberId())
                 .reportTitle(report.getReportTitle())
                 .reportContent(report.getReportContent())

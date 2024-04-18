@@ -51,7 +51,7 @@ public class UserReportService {
         }
         // 여기도 나중에 매칭 넣기
         Report report = Report.builder()
-//                .reporter(reportSaveDto.getReporter())
+                .reporter(reportSaveDto.getReporter())
                 .reportedMemberId(reportSaveDto.getReportedMemberId())
                 .reportTitle(reportSaveDto.getReportTitle())
                 .reportContent(reportSaveDto.getReportContent())
@@ -68,7 +68,7 @@ public class UserReportService {
         Report report = reportRepository.findById(reportId).orElseThrow(() -> new ErrorHandler(ErrorStatus.REPORT_NOT_FOUND));
         return ReportDetailInfoResponseDto.builder()
                 .idx(report.getIdx())
-//                .reporter(report.getReporter)
+                .reporter(report.getReporter())
                 .reportedId(report.getReportedMemberId())
                 .reportTitle(report.getReportTitle())
                 .reportContent(report.getReportContent())
@@ -93,7 +93,7 @@ public class UserReportService {
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.REPORT_NOT_FOUND));
 
         return ReportDetailInfoResponseDto.builder()
-//                .reporter(report.getReporter())
+                .reporter(report.getReporter())
                 .reportedId(report.getReportedMemberId())
                 .reportTitle(report.getReportTitle())
                 .reportContent(report.getReportContent())

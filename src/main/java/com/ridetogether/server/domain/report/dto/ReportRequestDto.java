@@ -15,6 +15,7 @@ public class ReportRequestDto {
     @Builder
     public static class ReportUpdateRequestDto {
         private Member reporter;
+        private String reportedMemberId;
         private ReportStatus reportStatus;
         private String reportTitle;
         private String reportContent;

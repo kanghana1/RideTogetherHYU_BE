@@ -77,9 +77,16 @@ public class ReportController {
 
     // admin
     @GetMapping("?status={status}")
-    public ApiResponse<List<ReportDetailInfoResponseDto>> getWaitingReport(@PathVariable("status") HandleStatus handleStatus) {
-        return ApiResponse.onSuccess(adminReportService.getAllWaitingReport());
+    public ApiResponse<List<ReportDetailInfoResponseDto>> getReportByStatus(@PathVariable("status") HandleStatus handleStatus) {
+        if (handleStatus.equals(HandleStatus.WAITING)) {
+            return ApiResponse.onSuccess(adminReportService.getAllWaitingReport());
+        }
+        else if (handleStatus.equals(HandleStatus.COMPLETE)) {
+            return ApiResponse.onSuccess(adminReportService.getAllCompleteReport());
+        }
+        return ApiResponse.onSuccess(adminReportService.getAllCompanionReport());
     }
+
 
 
 

@@ -22,9 +22,9 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "member_idx")
-//    private Member reporter;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_idx")
+    private Member reporter;
 
     @OneToMany(mappedBy = "report")
     @JsonIgnore

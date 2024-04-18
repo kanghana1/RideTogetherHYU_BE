@@ -33,8 +33,16 @@ public class AdminReportService {
      */
     private final ReportRepository reportRepository;
 
-    public List<Report> getAllCompleteReport() {
-        return new ArrayList<>(reportRepository.findAllByHandleStatus(HandleStatus.COMPLETE));
+    public List<ReportDetailInfoResponseDto> getAllCompleteReport() {
+        List<Report> allByHandleStatus = reportRepository.findAllByHandleStatus(HandleStatus.COMPLETE);
+        List<ReportDetailInfoResponseDto> dto = new ArrayList<>();
+        if (allByHandleStatus.isEmpty()) {
+            throw new ErrorHandler(ErrorStatus.REPORT_NOT_FOUND);
+        }
+        for (Report report : allByHandleStatus) {
+            dto.add(ReportDtoConverter.convertReportToDetailInfoDto(report));
+        }
+        return dto;
     }
     public List<ReportDetailInfoResponseDto> getAllWaitingReport() {
         List<Report> allByHandleStatus = reportRepository.findAllByHandleStatus(HandleStatus.WAITING);
@@ -47,8 +55,16 @@ public class AdminReportService {
         }
         return lst;
     }
-    public List<Report> getAllCompanionReport() {
-        return new ArrayList<>(reportRepository.findAllByHandleStatus(HandleStatus.COMPANION));
+    public List<ReportDetailInfoResponseDto> getAllCompanionReport() {
+        List<Report> allByHandleStatus = reportRepository.findAllByHandleStatus(HandleStatus.COMPANION);
+        List<ReportDetailInfoResponseDto> lst = new ArrayList<>();
+        if (allByHandleStatus.isEmpty()) {
+            throw new ErrorHandler(ErrorStatus.REPORT_NOT_FOUND);
+        }
+        for (Report byHandleStatus : allByHandleStatus) {
+            lst.add(ReportDtoConverter.convertReportToDetailInfoDto(byHandleStatus));
+        }
+        return lst;
     }
 
     public Report getReportByIdx(Long idx) {

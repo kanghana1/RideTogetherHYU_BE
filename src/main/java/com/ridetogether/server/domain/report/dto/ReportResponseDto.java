@@ -47,27 +47,4 @@ public class ReportResponseDto {
     }
 
 
-    /*
-    @Data
-    @Builder
-    public static class ReporterResponseDto {
-        private Long idx;
-        private String memberId;
-        private String name;
-        private Role role;
-        private IsReporter isReporter;
-
-    }
-    @Data
-    @Builder
-    public static class ReportedResponseDto {
-        private Long idx;
-        private String memberId;
-        private String name;
-        private Role role;
-        private IsReporter isReporter;
-    }
-
-     */
-
 }
