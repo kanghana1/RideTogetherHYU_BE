@@ -30,10 +30,6 @@ public class Report {
     @JsonIgnore
     private List<ReportStatus> reportStatus;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "member_idx")
-//    private Member reported;
-
     private String reportedMemberId;
 
 //    @ManyToOne(fetch = FetchType.LAZY)

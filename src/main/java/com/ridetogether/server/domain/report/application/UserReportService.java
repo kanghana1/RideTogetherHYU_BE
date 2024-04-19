@@ -49,6 +49,13 @@ public class UserReportService {
         if (reportSaveDto.getReportContent().isEmpty()) {
             throw new ErrorHandler(ErrorStatus.REPORT_CONTENT_NULL);
         }
+        if (!memberRepository.existsByMemberId(reportSaveDto.getReportedMemberId())) {
+            throw new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND);
+        }
+        Member member = memberRepository.findByIdx(reportSaveDto.getReporter().getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if (member.isAdmin()) {
+            throw new ErrorHandler(ErrorStatus._BAD_REQUEST);
+        }
         // 여기도 나중에 매칭 넣기
         Report report = Report.builder()
                 .reporter(reportSaveDto.getReporter())
