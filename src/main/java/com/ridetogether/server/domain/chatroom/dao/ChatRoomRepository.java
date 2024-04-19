@@ -16,7 +16,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
     Optional<ChatRoom> findByMatchingIdxAndChatStatus(Long matchingIdx,ChatStatus status);
 
-    Optional<ChatRoom> findByIdxAndChatStatusAndRoomHashCodeGreaterThan(Long roomIdx, ChatStatus active, int i);
+//    Optional<ChatRoom> findByIdxAndChatStatusAndRoomHashCodeGreaterThan(Long roomIdx, ChatStatus active, int i);
 
-    Optional<ChatRoom> findByMatchingIdxAndChatStatusAndRoomHashCode(Long studyIdx, ChatStatus active, int i);
+//    Optional<ChatRoom> findByMatchingIdxAndChatStatusAndRoomHashCode(Long studyIdx, ChatStatus active, int i);
 }

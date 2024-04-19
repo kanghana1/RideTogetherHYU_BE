@@ -64,8 +64,8 @@ public class RedisConfig {
     키는 문자열로 직렬화하고, 값은 ChatMessageDto 객체를 JSON 형식으로 직렬화
      */
     @Bean
-    public RedisTemplate<String, ChatMessageDto> redisTemplateForChatDto(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, ChatMessageDto> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<Long, ChatMessageDto> redisTemplateForChatDto(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<Long, ChatMessageDto> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatMessageDto.class)); // ChatDto 클래스를 직렬화
