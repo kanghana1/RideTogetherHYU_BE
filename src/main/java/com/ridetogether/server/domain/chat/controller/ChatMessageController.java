@@ -1,43 +1,75 @@
-//package com.ridetogether.server.domain.chat.controller;
-//
-//import com.ridetogether.server.domain.chat.application.ChatMessageService;
-//import com.ridetogether.server.domain.chat.dto.ChatMessageDto;
-//import com.ridetogether.server.domain.member.dao.MemberRepository;
-//import com.ridetogether.server.domain.member.domain.Member;
-//import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
-//import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.messaging.handler.annotation.MessageMapping;
-//import org.springframework.stereotype.Controller;
-//
-//@RequiredArgsConstructor
-//@Controller
-//public class ChatMessageController {
-//
-//    private final ChatMessageService chatMessageService;
-//    private final MemberRepository memberRepository;
-//
-//    /**
-//     * websocket "/pub/chat/enter"로 들어오는 메시징을 처리한다.
-//     * 채팅방에 입장했을 경우
-//     */
-//    @MessageMapping("/chat/enter")
-//    public void enter(
-//            ChatMessageDto chatMessageDto) {
-//        Member member = memberRepository.findByIdx(chatMessageDto.getMemberIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-//
-//        chatMessageService.enterChatRoom(member.getIdx(), chatMessageDto.getRoomIdx());
-//    }
-//
-//    /**
-//     * websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
-//     */
-//    @MessageMapping("/chat/message")
-//    public void message(
-//            ChatMessageDto chatMessageDto
-//    ) {
-//        Member member = memberRepository.findByIdx(chatMessageDto.getMemberIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-//
-//        chatMessageService.sendMessage(chatMessageDto, member);
-//    }
-//}
+package com.ridetogether.server.domain.chat.controller;
+
+import com.ridetogether.server.domain.chat.application.ChatMessageService;
+import com.ridetogether.server.domain.chat.application.RedisPublisher;
+import com.ridetogether.server.domain.chat.domain.ChatMessage;
+import com.ridetogether.server.domain.chat.dto.ChatMessageDto;
+import com.ridetogether.server.domain.chatroom.application.ChatRoomService;
+import com.ridetogether.server.domain.chatroom.domain.ChatRoom;
+import com.ridetogether.server.domain.member.domain.Member;
+import com.ridetogether.server.global.apiPayload.ApiResponse;
+import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
+import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
+import com.ridetogether.server.global.util.SecurityUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
+
+@RequiredArgsConstructor
+@Controller
+@Slf4j
+public class ChatMessageController {
+
+    private final RedisPublisher redisPublisher;
+    private final SimpMessageSendingOperations template;
+    private final ChatMessageService chatMessageService;
+
+    private final ChatRoomService chatRoomService;
+
+    // MessageMapping 을 통해 webSocket 로 들어오는 메시지를 발신 처리한다.
+    // 이때 클라이언트에서는 /pub/chat/message 로 요청하게 되고 이것을 controller 가 받아서 처리한다.
+    // 처리가 완료되면 /sub/chat/room/roomId 로 메시지가 전송된다.
+    @MessageMapping("/chat/enter")
+    public void enterUser(@Payload ChatMessageDto chatMessageDto) {
+
+        Member loginMember = SecurityUtil.getLoginMember()
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        // 채팅방 유저+1
+        chatRoomService.plusUserCnt(chatMessageDto.getChatRoomId());
+
+        // 채팅방에 유저 추가
+        chatRoomService.enterChatRoom(loginMember.getIdx(), chatMessageDto.getChatRoomId());
+        chatMessageDto.setMessage(chatMessageDto.getSenderNickName() + " 님 입장!!");
+        log.info("{} 님 채팅방에 입장을 성공하였습니다. 채팅방 ID : {}", chatMessageDto.getSenderNickName(), chatMessageDto.getChatRoomId());
+        template.convertAndSend("/sub/chat/room/" + chatMessageDto.getChatRoomId(), chatMessageDto);
+    }
+
+    // 해당 유저
+    @MessageMapping("/chat/sendMessage")
+    public void sendMessage(@Payload ChatMessageDto chatMessageDto) {
+        log.info("CHAT {}", chatMessageDto);
+        ChatRoom chatRoom=chatRoomService.findRoomById(chatMessageDto.getChatRoomId());
+
+        ChatMessage message = chatMessageService.createChatMessage(chatMessageDto, chatMessageDto.getSenderIdx());
+
+        chatRoomService.addChatMessage(chatRoom, message);
+        // Websocket에 발행된 메시지를 redis로 발행(publish)
+        redisPublisher.publish(chatRoomService.getTopic(chatMessageDto.getChatRoomId() + ""), message);
+        chatMessageService.saveMessage(chatMessageDto);
+//        template.convertAndSend("/sub/chat/room/" + chat.getRoomId(), chat);
+
+    }
+    // 대화 내역 조회
+    @GetMapping("/chat/room/{roomId}/message")
+    public ApiResponse<List<ChatMessageDto>> loadMessage(@PathVariable Long roomId) {
+        return ApiResponse.onSuccess(chatMessageService.loadMessage(roomId));
+    }
+}

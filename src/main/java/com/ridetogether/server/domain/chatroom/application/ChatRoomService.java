@@ -1,6 +1,7 @@
 package com.ridetogether.server.domain.chatroom.application;
 
 import com.ridetogether.server.domain.chat.application.RedisSubscriber;
+import com.ridetogether.server.domain.chat.domain.ChatMessage;
 import com.ridetogether.server.domain.chat.model.ChatStatus;
 import com.ridetogether.server.domain.chatroom.converter.ChatRoomDtoConverter;
 import com.ridetogether.server.domain.chatroom.dao.ChatRoomRepository;
@@ -68,6 +69,10 @@ public class ChatRoomService {
 
     public ChatRoom findRoomById(Long chatRoomId) {
         return chatRoomRepository.findById(chatRoomId).orElseThrow(() -> new ErrorHandler(ErrorStatus.CHAT_ROOM_NOT_FOUND));
+    }
+
+    public void addChatMessage(ChatRoom chatRoom, ChatMessage chatMessage) {
+        chatRoom.addChatMessage(chatMessage);
     }
 
     /**

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
@@ -20,20 +21,22 @@ public class ChatMessageDto implements Serializable {
     }
 
     private MessageType type; // 메시지 타입
-    private Long roomIdx; // 공통으로 만들어진 방 번호
+    private Long chatRoomId; // 공통으로 만들어진 방 번호
     private Long senderIdx;
     private String senderNickName;
     private String roomTitle; // 매칭 제목
     private String message; // 메시지
+    private LocalDateTime createdAt; // 메시지 생성 시간
 
     // 이미지 향후 추가
 
 
-    public ChatMessageDto(MessageType type, Long roomIdx, Long senderIdx, String senderNickName, String message) {
+    public ChatMessageDto(MessageType type, Long chatRoomId, Long senderIdx, String senderNickName, String message, LocalDateTime createdAt) {
         this.type = type;
-        this.roomIdx = roomIdx;
+        this.chatRoomId = chatRoomId;
         this.senderIdx = senderIdx;
         this.senderNickName = senderNickName;
         this.message = message;
+        this.createdAt = createdAt;
     }
 }

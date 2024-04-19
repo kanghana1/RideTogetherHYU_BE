@@ -31,7 +31,7 @@ public class RedisSubscriber implements MessageListener {
             ChatMessageDto messageDto = objectMapper.readValue(publishMessage, ChatMessageDto.class);
 
             // Websocket 구독자에게 채팅 메시지 전송
-            messagingTemplate.convertAndSend("/sub/chat/room/" + messageDto.getRoomIdx(), messageDto);
+            messagingTemplate.convertAndSend("/sub/chat/room/" + messageDto.getChatRoomId(), messageDto);
 
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage());
