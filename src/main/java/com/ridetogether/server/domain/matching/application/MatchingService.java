@@ -1,6 +1,7 @@
 package com.ridetogether.server.domain.matching.application;
 
 import com.ridetogether.server.domain.matching.dao.MatchingRepository;
+import com.ridetogether.server.domain.matching.dao.MemberMatchingRepository;
 import com.ridetogether.server.domain.matching.domain.Matching;
 import com.ridetogether.server.domain.matching.domain.MemberMatching;
 import com.ridetogether.server.domain.matching.dto.MatchingDto.CreateMatchingDto;
@@ -22,6 +23,7 @@ public class MatchingService {
 
     private final MemberRepository memberRepository;
     private final MatchingRepository matchingRepository;
+    private final MemberMatchingRepository memberMatchingRepository;
 
     private static final int MAX_PARTICIPANT_COUNT = 4;
 
@@ -43,6 +45,8 @@ public class MatchingService {
                 .member(member)
                 .matching(matching)
                 .build();
+
+        memberMatchingRepository.save(memberMatching);
         member.getMemberMatching().add(memberMatching);
 
         return CreateMatchingResponseDto.builder()

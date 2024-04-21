@@ -1,9 +1,7 @@
 package com.ridetogether.server.domain.chat.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ridetogether.server.domain.chat.dto.UnreadMessageCount;
-import com.ridetogether.server.domain.chat.dto.ChatMessageRequest;
-import com.ridetogether.server.domain.chat.dto.ChatMessageResponse;
+import com.ridetogether.server.domain.chat.dto.ChatMessageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -12,14 +10,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
-import java.util.stream.Collectors;
-
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class RedisSubscriber implements MessageListener {
     private final ObjectMapper objectMapper;
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final SimpMessageSendingOperations messagingTemplate;
 
     /**
@@ -32,28 +28,13 @@ public class RedisSubscriber implements MessageListener {
             String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
 
             // ChatMessage 객체로 맵핑
-            ChatMessageRequest roomMessage = objectMapper.readValue(publishMessage, ChatMessageRequest.class);
+            ChatMessageDto messageDto = objectMapper.readValue(publishMessage, ChatMessageDto.class);
 
-            // getType이 TALK, GROUP_TALK, UNREAD_MESSAGE_COUNT_ALARM 일 경우
-            if (roomMessage.getType() != null) {
-                if (roomMessage.getType().equals(ChatMessageRequest.MessageType.UNREAD_MESSAGE_COUNT_ALARM)) {
-                    // 안 읽은 메세지일 경우
-                    UnreadMessageCount messageCount = new UnreadMessageCount(roomMessage);
-                    Long otherUserId = roomMessage.getOtherMemberIds().stream().collect(Collectors.toList()).get(0);
-                    // Websocket 구독자에게 안읽은 메세지 반환
-                    messagingTemplate.convertAndSend("/sub/chat/unread/" + otherUserId, messageCount);
-                } else {
-                    // 그룹채팅이거나 일대일 채팅일 경우
-                    ChatMessageResponse chatMessageResponse = new ChatMessageResponse(roomMessage);
-                    // Websocket 구독자에게 채팅 메시지 전송
-                    messagingTemplate.convertAndSend("/sub/chat/room/" + roomMessage.getRoomIdx(), chatMessageResponse);
-                }
-            } else {   // 만약 AlarmRequest 클래스로 넘어왔다면
-//                AlarmRequest alarmRequest = objectMapper.readValue(publishMessage, AlarmRequest.class);
-//                messagingTemplate.convertAndSend("/sub/user/" + alarmRequest.getOtherUserId(), AlarmResponse.toDto(alarmRequest));
-            }
+            // Websocket 구독자에게 채팅 메시지 전송
+            messagingTemplate.convertAndSend("/sub/chat/room/" + messageDto.getChatRoomId(), messageDto);
+
         } catch (Exception e) {
-//            throw new ChatMessageNotFoundException();
+            log.error("Exception : {}", e.getMessage());
         }
     }
 }

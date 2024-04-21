@@ -27,6 +27,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_STATE_NOT_STUDENT(HttpStatus.BAD_REQUEST, "MEMBER4006", "한양대학교 학생 인증이 미완료된 사용자입니다."),
     MEMBER_STATE_NOT_ADMIN(HttpStatus.FORBIDDEN, "MEMBER4007", "접근 권한이 없습니다"),
     MEMBER_LOGIN_NOT_SUPPORT(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "MEMBER4015", "지원되지 않는 로그인 형식입니다."),
+    MEMBER_NOT_IN_MATCHING(HttpStatus.BAD_REQUEST, "MEMBER4008", "매칭에 참여하지 않은 사용자입니다."),
 
     //이메일 응답
     EMAIL_SEND_FAIL(HttpStatus.BAD_REQUEST, "EMAIL4001", "이메일 전송에 실패하였습니다."),
@@ -39,9 +40,12 @@ public enum ErrorStatus implements BaseErrorCode {
 
     //채팅 응답
     CHAT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "CHAT4001", "채팅방이 존재하지 않습니다."),
+    CHAT_ROOM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "CHAT4002", "이미 존재하는 채팅방입니다."),
+    CHAT_ROOM_MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "CHAT4003", "채팅방에 참여한 멤버가 존재하지 않습니다."),
 
     //매칭 응답
     MATCHING_NOT_FOUND(HttpStatus.BAD_REQUEST, "MATCH4001", "매칭이 존재하지 않습니다."),
+    MATCHING_ALREADY_FINISH(HttpStatus.BAD_REQUEST, "MATCH4002", "이미 종료된 매칭입니다."),
 
     // 신고 응답
     REPORT_NOT_FOUND(HttpStatus.BAD_REQUEST, "REPORT4001", "신고내역이 존재하지 않습니다."),
