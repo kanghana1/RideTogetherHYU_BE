@@ -26,6 +26,8 @@ public class Matching extends BaseTimeEntity {
 
     private Long hostMemberIdx;
 
+    private String hostMemberNickName;
+
     private String title;
 
     private String ridingTime;
@@ -54,5 +56,17 @@ public class Matching extends BaseTimeEntity {
     @OneToMany(mappedBy = "matching")
     @JsonIgnore
     private List<MemberMatching> memberMatching;
+
+    public void updateMatchingStatus(MatchingStatus matchingStatus) {
+        this.matchingStatus = matchingStatus;
+    }
+
+    public void plusParticipantCount() {
+        this.participantCount++;
+    }
+
+    public void minusParticipantCount() {
+        this.participantCount--;
+    }
 
 }

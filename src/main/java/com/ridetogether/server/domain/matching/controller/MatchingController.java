@@ -9,10 +9,7 @@ import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
 import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
 import com.ridetogether.server.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.ridetogether.server.domain.matching.dto.MatchingRequestDto.*;
 
@@ -28,6 +25,13 @@ public class MatchingController {
         Member loginMember = SecurityUtil.getLoginMember()
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
         return ApiResponse.onSuccess(matchingService.createMatching(MatchingDtoConverter.convertToCreateMatchingDto(requestDto, loginMember.getIdx())));
+    }
+
+    @PostMapping("/join")
+    public ApiResponse<?> joinMatching(@RequestParam(value = "matchingIdx") Long matchingIdx) {
+        Member loginMember = SecurityUtil.getLoginMember()
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        return ApiResponse.onSuccess(matchingService.joinMatching(matchingIdx, loginMember.getIdx()));
     }
 
 }
