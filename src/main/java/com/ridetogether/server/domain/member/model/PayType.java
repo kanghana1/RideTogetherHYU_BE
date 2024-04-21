@@ -8,4 +8,8 @@ public enum PayType {
 	public static PayType fromName(String type) {
 		return PayType.valueOf(type.toUpperCase(ENGLISH) + "_PAY");
 	}
+
+	public static String toName(PayType type) {
+		return type.name().replace("_PAY", "");
+	}
 }

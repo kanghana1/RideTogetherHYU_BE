@@ -2,7 +2,6 @@ package com.ridetogether.server.domain.matching.controller;
 
 import com.ridetogether.server.domain.matching.application.MatchingService;
 import com.ridetogether.server.domain.matching.converter.MatchingDtoConverter;
-import com.ridetogether.server.domain.matching.dto.MatchingRequestDto;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.global.apiPayload.ApiResponse;
 import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
@@ -32,6 +31,11 @@ public class MatchingController {
         Member loginMember = SecurityUtil.getLoginMember()
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
         return ApiResponse.onSuccess(matchingService.joinMatching(matchingIdx, loginMember.getIdx()));
+    }
+
+    @GetMapping
+    public ApiResponse<?> getMatchingInfo(@RequestParam(value = "matchingIdx") Long matchingIdx) {
+        return ApiResponse.onSuccess(matchingService.getMatchingInfo(matchingIdx));
     }
 
 }
