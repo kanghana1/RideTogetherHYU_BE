@@ -2,6 +2,7 @@ package com.ridetogether.server.domain.report.dto;
 
 import com.ridetogether.server.domain.image.domain.Image;
 import com.ridetogether.server.domain.member.domain.Member;
+import com.ridetogether.server.domain.report.domain.ReportStatus;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,7 +15,8 @@ public class ReportRequestDto {
     @Builder
     public static class ReportUpdateRequestDto {
         private Member reporter;
-        private String reported;
+        private String reportedMemberId;
+        private ReportStatus reportStatus;
         private String reportTitle;
         private String reportContent;
         private List<Image> images;

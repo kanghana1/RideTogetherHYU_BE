@@ -2,6 +2,7 @@ package com.ridetogether.server.domain.report.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ridetogether.server.domain.image.domain.Image;
+import com.ridetogether.server.domain.matching.domain.Matching;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.domain.report.Model.HandleStatus;
 import jakarta.persistence.*;
@@ -25,12 +26,13 @@ public class Report {
     @JoinColumn(name = "member_idx")
     private Member reporter;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "member_idx")
-//    private Member reported;
+    @OneToMany(mappedBy = "report")
+    @JsonIgnore
+    private List<ReportStatus> reportStatus;
 
+    private String reportedMemberId;
 
-//    private Post reportMatching;
+    private String reportMatchingId;
 
     private String reportTitle;
 
