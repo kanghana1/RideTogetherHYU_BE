@@ -8,6 +8,8 @@ import com.ridetogether.server.domain.member.dto.MemberDto;
 import com.ridetogether.server.domain.member.model.*;
 import com.ridetogether.server.domain.report.dao.ReportRepository;
 import com.ridetogether.server.domain.report.domain.Report;
+import com.ridetogether.server.domain.report.dto.ReportDto;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +58,5 @@ class AdminReportServiceTest {
         memberRepository.save(member);
     }
 
-    @Test
-    void saveReport() {
-
-    }
 
 }

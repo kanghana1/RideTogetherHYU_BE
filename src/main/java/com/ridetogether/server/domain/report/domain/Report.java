@@ -32,9 +32,6 @@ public class Report {
 
     private String reportedMemberId;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "matching_idx")
-//    private Matching reportMatching;
     private String reportMatchingId;
 
     private String reportTitle;
