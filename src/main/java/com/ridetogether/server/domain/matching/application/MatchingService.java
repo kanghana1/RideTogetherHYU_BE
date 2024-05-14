@@ -57,9 +57,8 @@ public class MatchingService {
                 .build();
 
         memberMatchingRepository.save(memberMatching);
-        member.getMemberMatching().add(memberMatching);
-        matching.getMemberMatching().add(memberMatching);
-
+        member.addMemberMatching(memberMatching);
+        matching.addMemberMatching(memberMatching);
         return CreateMatchingResponseDto.builder()
                 .matchingIdx(matching.getIdx())
                 .memberIdx(member.getIdx())

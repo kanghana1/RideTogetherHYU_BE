@@ -8,6 +8,7 @@ import com.ridetogether.server.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +22,10 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatRoom extends BaseTimeEntity implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 6494678977089006639L;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

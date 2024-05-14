@@ -1,6 +1,7 @@
 package com.ridetogether.server.domain.chat.application;
 
 import com.ridetogether.server.domain.chatroom.application.ChatRoomService;
+import com.ridetogether.server.domain.chatroom.dao.RedisRepository;
 import com.ridetogether.server.domain.chatroom.domain.ChatRoom;
 import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
@@ -21,9 +22,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Slf4j
 public class StompHandler implements ChannelInterceptor {
-    ChatRoomService chatRoomService;
-    private final JwtService jwtService;
-    private final MemberRepository memberRepository;
+//    private final ChatRoomService chatRoomService;
+    private final RedisRepository redisRepository;
+//    private final JwtService jwtService;
+//    private final MemberRepository memberRepository;
 
     // WebSocket을 통해 들어온 요청이 처리 되기 전에 실행
     @Override
@@ -34,27 +36,27 @@ public class StompHandler implements ChannelInterceptor {
         if (StompCommand.CONNECT == accessor.getCommand()) {
             Member member = SecurityUtil.getLoginMember().orElseThrow(() -> new ErrorHandler(ErrorStatus._UNAUTHORIZED));
             String sessionId = (String) message.getHeaders().get("simpSessionId");
-            chatRoomService.saveMyInfo(sessionId, member.getIdx());
+            redisRepository.saveMyInfo(sessionId, member.getIdx());
 
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) {
             String sessionId = (String) message.getHeaders().get("simpSessionId");
 
             // 채팅방에서 나가는 것이 맞는지 확인
-            if(chatRoomService.existMyInfo(sessionId)) {
-                Long memberIdx = chatRoomService.getMyInfo(sessionId);
-                Long chatRoomId = chatRoomService.getMemberEnteredChatRoomId(sessionId);
+            if(redisRepository.existMyInfo(sessionId)) {
+                Long memberIdx = redisRepository.getMyInfo(sessionId);
+                Long chatRoomId = redisRepository.getMemberEnteredChatRoomId(sessionId);
                 if (chatRoomId == null) {
                     log.error("Stomp Handler : 채팅방을 찾는데 실패하였습니다. memberIdx : {}", memberIdx);
                     throw new ErrorHandler(ErrorStatus.CHAT_ROOM_NOT_FOUND);
                 }
 
                 // 채팅방 퇴장 정보 저장
-                if(chatRoomService.existMemberInChatRoom(chatRoomId, sessionId)) {
-                    chatRoomService.exitMemberEnterChatRoom(memberIdx);
+                if(redisRepository.existMemberInChatRoom(chatRoomId, sessionId)) {
+                    redisRepository.exitMemberEnterChatRoom(memberIdx);
                 }
 
-                chatRoomService.deleteMyInfo(sessionId);
-                chatRoomService.minusUserCnt(chatRoomId);
+                redisRepository.deleteMyInfo(sessionId);
+                redisRepository.minusUserCnt(chatRoomId);
             }
         }
         return message;

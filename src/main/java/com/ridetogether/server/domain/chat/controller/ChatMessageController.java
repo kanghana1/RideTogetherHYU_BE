@@ -2,9 +2,11 @@ package com.ridetogether.server.domain.chat.controller;
 
 import com.ridetogether.server.domain.chat.application.ChatMessageService;
 import com.ridetogether.server.domain.chat.application.RedisPublisher;
+import com.ridetogether.server.domain.chat.application.RedisSubscriber;
 import com.ridetogether.server.domain.chat.domain.ChatMessage;
 import com.ridetogether.server.domain.chat.dto.ChatMessageDto;
 import com.ridetogether.server.domain.chatroom.application.ChatRoomService;
+import com.ridetogether.server.domain.chatroom.dao.RedisRepository;
 import com.ridetogether.server.domain.chatroom.domain.ChatRoom;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.global.apiPayload.ApiResponse;
@@ -13,6 +15,8 @@ import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
 import com.ridetogether.server.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -32,6 +36,11 @@ public class ChatMessageController {
     private final ChatMessageService chatMessageService;
 
     private final ChatRoomService chatRoomService;
+    private final RedisRepository redisRepository;
+
+    // 채팅방(topic)에 발행되는 메시지를 처리할 Listner
+    private final RedisMessageListenerContainer redisMessageListener;
+    private final RedisSubscriber redisSubscriber;
 
     // MessageMapping 을 통해 webSocket 로 들어오는 메시지를 발신 처리한다.
     // 이때 클라이언트에서는 /pub/chat/message 로 요청하게 되고 이것을 controller 가 받아서 처리한다.
@@ -42,10 +51,13 @@ public class ChatMessageController {
         Member loginMember = SecurityUtil.getLoginMember()
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
         // 채팅방 유저+1
-        chatRoomService.plusUserCnt(chatMessageDto.getChatRoomId());
+        redisRepository.plusUserCnt(chatMessageDto.getChatRoomId());
 
         // 채팅방에 유저 추가
-        chatRoomService.enterChatRoom(loginMember.getIdx(), chatMessageDto.getChatRoomId());
+        ChannelTopic topic = redisRepository.enterChatRoom(loginMember.getIdx(), chatMessageDto.getChatRoomId());
+        redisMessageListener.addMessageListener(redisSubscriber, topic);
+
+
         chatMessageDto.setMessage(chatMessageDto.getSenderNickName() + " 님 입장!!");
         log.info("{} 님 채팅방에 입장을 성공하였습니다. 채팅방 ID : {}", chatMessageDto.getSenderNickName(), chatMessageDto.getChatRoomId());
         template.convertAndSend("/sub/chat/room/" + chatMessageDto.getChatRoomId(), chatMessageDto);
