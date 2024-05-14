@@ -10,6 +10,10 @@ import lombok.*;
 
 import java.util.List;
 
+/**
+ * 신고 당한 사람의 아이디만 넣어두기
+ * 신고가 들어왔을 때 근거가 충분하다고 생각이 들면, 신고 당한 사람에게 경고
+ */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

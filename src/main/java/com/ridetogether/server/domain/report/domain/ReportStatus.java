@@ -1,7 +1,6 @@
 package com.ridetogether.server.domain.report.domain;
 
 import com.ridetogether.server.domain.member.domain.Member;
-import com.ridetogether.server.domain.report.Model.PositionStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,6 +24,4 @@ public class ReportStatus {
     @JoinColumn(name = "report_idx")
     private Report report;
 
-    @Enumerated(EnumType.STRING)
-    private PositionStatus positionStatus;
 }
