@@ -9,7 +9,10 @@ import com.ridetogether.server.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,7 +20,10 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Matching extends BaseTimeEntity {
+public class Matching extends BaseTimeEntity implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 6494678977089006639L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +31,8 @@ public class Matching extends BaseTimeEntity {
     private Long idx;
 
     private Long hostMemberIdx;
+
+    private String hostMemberNickName;
 
     private String title;
 
@@ -53,6 +61,23 @@ public class Matching extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "matching")
     @JsonIgnore
-    private List<MemberMatching> memberMatching;
+    @Builder.Default
+    private List<MemberMatching> memberMatching = new ArrayList<>();
+
+    public void addMemberMatching(MemberMatching memberMatching) {
+        this.memberMatching.add(memberMatching);
+    }
+
+    public void updateMatchingStatus(MatchingStatus matchingStatus) {
+        this.matchingStatus = matchingStatus;
+    }
+
+    public void plusParticipantCount() {
+        this.participantCount++;
+    }
+
+    public void minusParticipantCount() {
+        this.participantCount--;
+    }
 
 }

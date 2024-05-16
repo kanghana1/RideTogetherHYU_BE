@@ -10,7 +10,6 @@ public class MatchingRequestDto {
     @Builder
     @Data
     public static class CreateMatchingRequestDto{
-        private String hostMemberIdx;
         private String title;
         private String ridingTime;
         private String departure;

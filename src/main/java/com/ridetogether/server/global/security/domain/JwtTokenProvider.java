@@ -115,7 +115,7 @@ public class JwtTokenProvider {
 		// UserDetails 객체를 만들어서 Authentication return
 		// UserDetails: interface, User: UserDetails를 구현한 class
 		String memberId = (String) claims.get("memberId");
-		Member member = memberRepository.findByEmail(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));;
+		Member member = memberRepository.findByEmail(memberId).orElse(null);
 		UserDetails principal = new CustomUserDetails(member);
 		return new UsernamePasswordAuthenticationToken(principal, "", authorities);
 	}
