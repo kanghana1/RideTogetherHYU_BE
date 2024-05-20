@@ -33,7 +33,6 @@ public class ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final RedisMessageListenerContainer redisMessageListener;
-    private final RedisSubscriber redisSubscriber;
 //    private final AlarmRepository alarmRepository;
     private final MemberRepository memberRepository;
 
@@ -106,7 +105,6 @@ public class ChatMessageService {
                 redisTemplate.opsForList().rightPush(chatRoomId, chatDto);                                // redis 저장
             }
         } else {
-            // 7.
             messageList.addAll(redisMessageList);
         }
 
