@@ -26,13 +26,11 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_idx")
-    private Member reporter;
-
     @OneToMany(mappedBy = "report")
     @JsonIgnore
     private List<ReportStatus> reportStatus;
+
+    private String reporterMemberId;
 
     private String reportedMemberId;
 

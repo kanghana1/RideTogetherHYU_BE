@@ -12,6 +12,7 @@ import com.ridetogether.server.domain.member.model.PayType;
 import com.ridetogether.server.domain.member.model.StudentStatus;
 import com.ridetogether.server.domain.member.model.Role;
 import com.ridetogether.server.domain.report.domain.Report;
+import com.ridetogether.server.domain.report.domain.ReportStatus;
 import com.ridetogether.server.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 
@@ -80,9 +81,9 @@ public class Member extends BaseTimeEntity {
 	@JsonIgnore
 	private List<Image> images;
 
-	@OneToMany(mappedBy = "reporter")
+	@OneToMany(mappedBy = "member")
 	@JsonIgnore
-	private List<Report> reports;
+	private List<ReportStatus> reportStatuses;
 
 
 	@OneToMany(mappedBy = "member")
