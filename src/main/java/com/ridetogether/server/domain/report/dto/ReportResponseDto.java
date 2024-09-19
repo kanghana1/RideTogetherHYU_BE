@@ -2,9 +2,7 @@ package com.ridetogether.server.domain.report.dto;
 
 import com.ridetogether.server.domain.image.domain.Image;
 import com.ridetogether.server.domain.member.domain.Member;
-import com.ridetogether.server.domain.member.model.Role;
-import com.ridetogether.server.domain.report.Model.HandleStatus;
-import com.ridetogether.server.domain.report.Model.IsReporter;
+import com.ridetogether.server.domain.report.model.HandleStatus;
 import lombok.Builder;
 import lombok.Data;
 

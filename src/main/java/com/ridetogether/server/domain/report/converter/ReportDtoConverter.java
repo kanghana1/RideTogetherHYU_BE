@@ -1,7 +1,5 @@
 package com.ridetogether.server.domain.report.converter;
 
-import com.ridetogether.server.domain.member.domain.Member;
-import com.ridetogether.server.domain.report.Model.IsReporter;
 import com.ridetogether.server.domain.report.domain.Report;
 
 import static com.ridetogether.server.domain.report.dto.ReportDto.*;

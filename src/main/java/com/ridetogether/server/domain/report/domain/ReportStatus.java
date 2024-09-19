@@ -1,7 +1,7 @@
 package com.ridetogether.server.domain.report.domain;
 
 import com.ridetogether.server.domain.member.domain.Member;
-import com.ridetogether.server.domain.report.Model.PositionStatus;
+import com.ridetogether.server.domain.report.model.PositionStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

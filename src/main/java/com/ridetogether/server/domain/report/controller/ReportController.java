@@ -1,6 +1,6 @@
 package com.ridetogether.server.domain.report.controller;
 
-import com.ridetogether.server.domain.report.Model.HandleStatus;
+import com.ridetogether.server.domain.report.model.HandleStatus;
 import com.ridetogether.server.domain.report.application.AdminReportService;
 import com.ridetogether.server.domain.report.application.UserReportService;
 import com.ridetogether.server.global.apiPayload.ApiResponse;

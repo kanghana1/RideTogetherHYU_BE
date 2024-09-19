@@ -1,10 +1,9 @@
 package com.ridetogether.server.domain.report.application;
 
-import com.ridetogether.server.domain.report.Model.HandleStatus;
+import com.ridetogether.server.domain.report.model.HandleStatus;
 import com.ridetogether.server.domain.report.converter.ReportDtoConverter;
 import com.ridetogether.server.domain.report.dao.ReportRepository;
 import com.ridetogether.server.domain.report.domain.Report;
-import com.ridetogether.server.domain.report.dto.ReportResponseDto;
 import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
 import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
 import lombok.RequiredArgsConstructor;

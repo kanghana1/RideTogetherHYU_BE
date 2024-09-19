@@ -2,9 +2,8 @@ package com.ridetogether.server.domain.report.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ridetogether.server.domain.image.domain.Image;
-import com.ridetogether.server.domain.matching.domain.Matching;
 import com.ridetogether.server.domain.member.domain.Member;
-import com.ridetogether.server.domain.report.Model.HandleStatus;
+import com.ridetogether.server.domain.report.model.HandleStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
