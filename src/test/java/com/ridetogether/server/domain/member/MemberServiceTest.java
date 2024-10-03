@@ -1,4 +1,4 @@
-package com.ridetogether.server.domain.member;
-
-public class MemberServiceTest {
-}
+//package com.ridetogether.server.domain.member;
+//
+//public class MemberServiceTest {
+//}

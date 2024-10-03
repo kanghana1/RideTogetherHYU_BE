@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ridetogether.server.domain.image.domain.Image;
 import com.ridetogether.server.domain.matching.domain.MemberMatching;
 import com.ridetogether.server.domain.member.dto.MemberDto.MemberUpdateDto;
-import com.ridetogether.server.domain.member.dto.MemberRequestDto.UpdateMemberRequestDto;
 import com.ridetogether.server.domain.member.model.ActiveState;
 import com.ridetogether.server.domain.member.model.Bank;
 import com.ridetogether.server.domain.member.model.Gender;
@@ -15,6 +14,7 @@ import com.ridetogether.server.domain.report.domain.Report;
 import com.ridetogether.server.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -87,7 +87,11 @@ public class Member extends BaseTimeEntity {
 
 	@OneToMany(mappedBy = "member")
 	@JsonIgnore
-	private List<MemberMatching> memberMatching;
+	private List<MemberMatching> memberMatching = new ArrayList<>();
+
+	public void addMemberMatching(MemberMatching memberMatching) {
+		this.memberMatching.add(memberMatching);
+	}
 
 	public void updateRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
