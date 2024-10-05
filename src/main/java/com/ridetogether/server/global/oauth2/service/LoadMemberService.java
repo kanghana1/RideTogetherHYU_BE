@@ -1,5 +1,6 @@
 package com.ridetogether.server.global.oauth2.service;
 
+import com.ridetogether.server.global.oauth2.domain.AccessTokenSocialTypeToken;
 import com.ridetogether.server.global.security.domain.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,7 @@ public class LoadMemberService { // 회원정보 받아오기
     private final RestTemplate restTemplate = new RestTemplate();
 
 
-    public CustomUserDetails getOAuth2UserDetails() {
+    public CustomUserDetails getOAuth2UserDetails(AccessTokenSocialTypeToken authentication) {
         return null;
     }
 }

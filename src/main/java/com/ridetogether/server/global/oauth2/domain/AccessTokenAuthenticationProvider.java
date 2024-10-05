@@ -1,6 +1,7 @@
 package com.ridetogether.server.global.oauth2.domain;
 
 import com.ridetogether.server.domain.member.dao.MemberRepository;
+import com.ridetogether.server.domain.member.model.Role;
 import com.ridetogether.server.global.oauth2.service.LoadMemberService;
 import com.ridetogether.server.global.security.domain.CustomUserDetails;
 import com.ridetogether.server.domain.member.domain.Member;
@@ -26,27 +27,35 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
-        CustomUserDetails OAuth2User = loadMemberService.getOAuth2UserDetails();
+        // getOAuth2UserDetails에서 restTemplate과 AccessToken을 가지고 회원 정보 조회 -> 식별자 값 가져옴
+        CustomUserDetails OAuth2User = loadMemberService.getOAuth2UserDetails((AccessTokenSocialTypeToken) authentication);
 
-        Member member = saveOrGet(OAuth2User);
+        Member member = saveOrGet(OAuth2User); // 받아온 식별자 값과 소셜로그인 방식을 통해 DB에서 회원 조회 / 없으면 새로 등록
+        OAuth2User.setRoles(member.getRole().name()); // 역할 넣기
 
-        return null;
+        // accessTokenSocialTypeToken 반환 -> 이렇게 하면 userDetails 타입으로 회원의 정보를 어디서든 조회 가능
+        return AccessTokenSocialTypeToken.builder()
+                .principal(OAuth2User)
+                .authorities(OAuth2User.getAuthorities())
+                .build();
+
 
     }
 
     private Member saveOrGet(CustomUserDetails oAuth2User) {
-        /*Optional<Member> member = memberRepository.findBySocialTypeAndMemberId(); // 이게 필요할까 ?
-        if (member.isEmpty()) {
-            // 고민해보기
-        }
-        return member.get();*/
-
-        return null;
+        // 소셜타입 필드에 넣기 !!!!! 코드 전체적으로 손보기
+        return memberRepository.findBySocialTypeAndMemberId(oAuth2User.getSocialType(), oAuth2User.getMemberId())
+                .orElesGet(() -> memberRepository.save(Member.builder()
+                        .socialType(oAuth2User.getSocialType())
+                        .memberId(oAuth2User.getMemberId())
+                        .role(Role.ROLE_GUEST)
+                        .build()));
     }
 
     // 구현 고민하기 (Socia lType 때문)
     @Override
     public boolean supports(Class<?> authentication) {
-        return false;
+        //AccessTokenSocialTypeToken타입의  authentication 객체이면 해당 Provider가 처리
+        return AccessTokenSocialTypeToken.class.isAssignableFrom(authentication);
     }
 }
