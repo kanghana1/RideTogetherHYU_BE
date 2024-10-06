@@ -31,7 +31,7 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
         CustomUserDetails OAuth2User = loadMemberService.getOAuth2UserDetails((AccessTokenSocialTypeToken) authentication);
 
         Member member = saveOrGet(OAuth2User); // 받아온 식별자 값과 소셜로그인 방식을 통해 DB에서 회원 조회 / 없으면 새로 등록
-        OAuth2User.setRoles(member.getRole().name()); // 역할 넣기
+        OAuth2User.updateAuthorities(member); // 역할 넣기
 
         // accessTokenSocialTypeToken 반환 -> 이렇게 하면 userDetails 타입으로 회원의 정보를 어디서든 조회 가능
         return AccessTokenSocialTypeToken.builder()
@@ -45,7 +45,7 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
     private Member saveOrGet(CustomUserDetails oAuth2User) {
         // 소셜타입 필드에 넣기 !!!!! 코드 전체적으로 손보기
         return memberRepository.findBySocialTypeAndMemberId(oAuth2User.getSocialType(), oAuth2User.getMemberId())
-                .orElesGet(() -> memberRepository.save(Member.builder()
+                .orElseGet(() -> memberRepository.save(Member.builder()
                         .socialType(oAuth2User.getSocialType())
                         .memberId(oAuth2User.getMemberId())
                         .role(Role.ROLE_GUEST)

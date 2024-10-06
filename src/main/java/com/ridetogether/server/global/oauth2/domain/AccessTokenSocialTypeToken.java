@@ -1,6 +1,7 @@
 package com.ridetogether.server.global.oauth2.domain;
 
 import com.ridetogether.server.global.oauth2.model.SocialType;
+import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import lombok.Builder;
@@ -10,7 +11,9 @@ import java.util.Collection;
 public class AccessTokenSocialTypeToken extends AbstractAuthenticationToken {
 
     private Object principal; // OAuth2UserDetails 타입
+    @Getter
     private String accessToken;
+    @Getter
     private SocialType socialType;
 
     public AccessTokenSocialTypeToken(String accessToken, SocialType socialType) {
