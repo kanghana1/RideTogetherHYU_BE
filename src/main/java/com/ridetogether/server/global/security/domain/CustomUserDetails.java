@@ -13,7 +13,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
+@Builder // 이슈 발생
 public class CustomUserDetails implements UserDetails {
+
+	private String id;
+	private String email;
 	@Getter
 	private SocialType socialType;
 	private Collection<? extends GrantedAuthority> authorities;
@@ -56,6 +60,9 @@ public class CustomUserDetails implements UserDetails {
 	}
 
 	public String getMemberId() {return member.getMemberId();}
+	public String getMemberEmail() {
+		return member.getEmail();
+	}
 
 	@Override
 	public boolean isAccountNonExpired() {

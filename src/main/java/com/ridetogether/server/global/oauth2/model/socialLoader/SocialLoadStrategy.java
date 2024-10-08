@@ -16,7 +16,7 @@ public abstract class SocialLoadStrategy {
     ParameterizedTypeReference<Map<String, Object>> RESPONSE_TYPE = new ParameterizedTypeReference<>(){};
     protected final RestTemplate restTemplate = new RestTemplate();
 
-    public OAuth2UserInfo getSocialInfo(String accessToken) {
+    public OAuth2UserInfo getUserInfo(String accessToken) {
         HttpHeaders httpHeaders = new HttpHeaders();
         setHeaders(accessToken, httpHeaders);
 
@@ -33,4 +33,5 @@ public abstract class SocialLoadStrategy {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     }
+
 }
