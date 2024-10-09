@@ -1,6 +1,10 @@
 package com.ridetogether.server.global.oauth2.filter;
 
+import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
+import com.ridetogether.server.global.apiPayload.exception.BaseExceptionType;
+import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
 import com.ridetogether.server.global.oauth2.domain.AccessTokenAuthenticationProvider;
+import com.ridetogether.server.global.oauth2.domain.AccessTokenSocialTypeToken;
 import com.ridetogether.server.global.oauth2.model.SocialType;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +29,8 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
     private static final String DEFAULT_OAUTH2_LOGIN_REQUEST_URL = "/api/member/login/";  // /api/member/login/ 로 오는 요청 처리 (api명세서대로 일단 넣음)
     private static final String HTTP_METHOD = "GET"; // http method방식 : get
     private static final String ACCESS_TOKEN_HEADER_NAME = "Authorization"; // access토큰 헤더에 보낼 때, key = Authorization
+    private static final String ACCESS_TOKEN_PREFIX = "Bearer ";
+
     private static final AntPathRequestMatcher DEFAULT_OAUTH2_LOGIN_PATH_REQUEST_MATCHER
             = new AntPathRequestMatcher(DEFAULT_OAUTH2_LOGIN_REQUEST_URL +"*", HTTP_METHOD); //  /oauth2/login/* 의 요청에, GET으로 온 요청에 매칭
 
@@ -56,11 +62,13 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
 
 
     private SocialType extractSocialType(HttpServletRequest request) { // 소셜로그인 타입 추출해서 요청 처리
+        log.info(request.getRequestURI().substring(DEFAULT_OAUTH2_LOGIN_REQUEST_URL.length()));
+
         return Arrays.stream(SocialType.values())
                 .filter(socialType ->
                         socialType.getSocialName()
                                 .equals(request.getRequestURI().substring(DEFAULT_OAUTH2_LOGIN_REQUEST_URL.length())))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 URL 주소입니다."));
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.KAKAO_SOCIAL_LOGIN_FAIL));
     }
 }

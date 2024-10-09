@@ -12,12 +12,14 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class AccessTokenAuthenticationProvider implements AuthenticationProvider {
 
     private final LoadMemberService loadMemberService;
@@ -52,7 +54,6 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
                         .build()));
     }
 
-    // 구현 고민하기 (Socia lType 때문)
     @Override
     public boolean supports(Class<?> authentication) {
         //AccessTokenSocialTypeToken타입의  authentication 객체이면 해당 Provider가 처리
