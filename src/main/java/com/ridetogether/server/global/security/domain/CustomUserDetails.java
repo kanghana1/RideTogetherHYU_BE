@@ -16,8 +16,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Builder // 이슈 발생
 public class CustomUserDetails implements UserDetails {
 
-	private String id;
-	private String email;
 	@Getter
 	private SocialType socialType;
 	private Collection<? extends GrantedAuthority> authorities;
@@ -32,6 +30,7 @@ public class CustomUserDetails implements UserDetails {
 	}
 
 	@ElementCollection(fetch = FetchType.EAGER)
+	@Builder.Default
 	private List<String> roles = new ArrayList<>();
 
 //	@Override

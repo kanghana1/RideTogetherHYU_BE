@@ -7,7 +7,6 @@ import com.ridetogether.server.global.oauth2.model.socialLoader.KakaoLoadsStrate
 import com.ridetogether.server.global.oauth2.model.socialLoader.SocialLoadStrategy;
 import com.ridetogether.server.global.security.domain.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -21,7 +20,7 @@ public class LoadMemberService { // 회원정보 받아오기
         SocialType socialType = authentication.getSocialType();
         SocialLoadStrategy socialLoadStrategy = getSocialLoadStrategy(socialType);
         OAuth2UserInfo userInfo = socialLoadStrategy.getUserInfo(authentication.getAccessToken());
-        return CustomUserDetails.builder()
+        return CustomUserDetails.builder() // 빌더 수정 필요
                 .id(userInfo.getId())
                 .email(userInfo.getEmail())
                 .socialType(socialType)
