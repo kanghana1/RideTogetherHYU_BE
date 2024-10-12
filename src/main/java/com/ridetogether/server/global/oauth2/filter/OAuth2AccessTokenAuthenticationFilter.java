@@ -25,7 +25,7 @@ import java.util.Arrays;
 @Component
 @Slf4j
 public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
-
+    // 로그인 요청 들어오면 가장 먼저 실행되는 필터
     private static final String DEFAULT_OAUTH2_LOGIN_REQUEST_URL = "/api/member/login/";  // /api/member/login/ 로 오는 요청 처리 (api명세서대로 일단 넣음)
     private static final String HTTP_METHOD = "GET"; // http method방식 : get
     private static final String ACCESS_TOKEN_HEADER_NAME = "Authorization"; // access토큰 헤더에 보낼 때, key = Authorization

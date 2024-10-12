@@ -13,12 +13,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
-@Builder // 이슈 발생
 public class CustomUserDetails implements UserDetails {
 
-	@Getter
-	private SocialType socialType;
-	private Collection<? extends GrantedAuthority> authorities;
 	private final Member member;
 
 	public CustomUserDetails(Member member) {
@@ -30,7 +26,6 @@ public class CustomUserDetails implements UserDetails {
 	}
 
 	@ElementCollection(fetch = FetchType.EAGER)
-	@Builder.Default
 	private List<String> roles = new ArrayList<>();
 
 //	@Override
@@ -42,12 +37,10 @@ public class CustomUserDetails implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return authorities;
+		return AuthorityUtils.createAuthorityList(member.getRole().toString());
+//		return null;
 	}
 
-	public void updateAuthorities(Member member) {
-		this.authorities = AuthorityUtils.createAuthorityList(member.getRole().toString());
-	}
 	@Override
 	public String getPassword() {
 		return member.getPassword();
@@ -59,9 +52,6 @@ public class CustomUserDetails implements UserDetails {
 	}
 
 	public String getMemberId() {return member.getMemberId();}
-	public String getMemberEmail() {
-		return member.getEmail();
-	}
 
 	@Override
 	public boolean isAccountNonExpired() {
