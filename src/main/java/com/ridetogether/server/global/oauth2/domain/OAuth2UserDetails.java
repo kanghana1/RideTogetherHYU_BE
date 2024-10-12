@@ -27,7 +27,6 @@ public class OAuth2UserDetails implements UserDetails {
     @Getter
     private String email;
     private String username;
-    private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
     @ElementCollection(fetch = FetchType.EAGER)

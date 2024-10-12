@@ -21,6 +21,9 @@ public class LoadMemberService { // 회원정보 받아오기
         OAuth2UserInfo userInfo = socialLoadStrategy.getUserInfo(authentication.getAccessToken());
 
         return OAuth2UserDetails.builder() // 빌더 수정 필요
+                .memberId(userInfo.getId())
+                .email(userInfo.getEmail())
+                .username(userInfo.getName())
                 .socialType(socialType)
                 .build();
     }
