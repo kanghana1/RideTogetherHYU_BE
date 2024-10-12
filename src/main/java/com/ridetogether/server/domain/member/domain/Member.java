@@ -50,7 +50,7 @@ public class Member extends BaseTimeEntity {
 	@Column(nullable = false, unique = true)
 	private String email;
 
-	@Column(nullable = false)
+//	@Column(nullable = false)   // 잠시만 건들게요 ㅠ ㅠ
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
@@ -141,4 +141,5 @@ public class Member extends BaseTimeEntity {
 	public void updateRole(Role role) {
 		this.role = role;
 	}
+
 }
