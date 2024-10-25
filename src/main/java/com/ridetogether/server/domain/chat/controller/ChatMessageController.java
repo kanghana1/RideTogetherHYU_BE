@@ -71,7 +71,7 @@ public class ChatMessageController {
 
         ChatMessage message = chatMessageService.createChatMessage(chatMessageDto, chatMessageDto.getSenderIdx());
 
-        chatRoomService.addChatMessage(chatRoom, message);
+//        chatRoomService.addChatMessage(chatRoom, message);
         // Websocket에 발행된 메시지를 redis로 발행(publish)
         redisPublisher.publish(chatRoomService.getTopic(chatMessageDto.getChatRoomId() + ""), message);
         chatMessageService.saveMessage(chatMessageDto);

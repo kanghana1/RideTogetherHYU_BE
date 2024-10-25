@@ -1,23 +1,23 @@
-package com.ridetogether.server.domain.chat.application;
+package com.ridetogether.server.domain.chat.handler;
 
-import com.ridetogether.server.domain.chatroom.application.ChatRoomService;
 import com.ridetogether.server.domain.chatroom.dao.RedisRepository;
-import com.ridetogether.server.domain.chatroom.domain.ChatRoom;
 import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
 import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
 import com.ridetogether.server.global.security.application.JwtService;
-import com.ridetogether.server.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -36,14 +36,22 @@ public class StompHandler implements ChannelInterceptor {
         StompHeaderAccessor headerAccessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
         if (StompCommand.CONNECT == accessor.getCommand()) {
-            String accessToken = String.valueOf(headerAccessor.getNativeHeader("Authorization").get(0));
-            String memberId = jwtService.extractMemberId(accessToken).orElse(null);
+            Optional<String> accessToken = Optional.ofNullable(String.valueOf(headerAccessor.getNativeHeader("Authorization").get(0)))
+                    .filter(token -> token.startsWith("Bearer "))
+                    .map(token -> token.replace("Bearer ", ""));
+
+            if (accessToken.isEmpty()) {
+                log.error("Stomp Handler : 유효하지 않은 토큰입니다.");
+                throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
+            }
+
+            String memberId = jwtService.extractMemberId(accessToken.get()).orElse(null);
 
             log.info("Stomp Handler : CONNECTED. memberId : {}", memberId);
 
-            if (!jwtService.isTokenValid(accessToken)) {
+            if (!jwtService.isTokenValid(accessToken.get())) {
                 log.error("Stomp Handler : 유효하지 않은 토큰입니다. memberId : {}", memberId);
-                throw new ErrorHandler(ErrorStatus._UNAUTHORIZED);
+                throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
             }
 
 
@@ -61,7 +69,7 @@ public class StompHandler implements ChannelInterceptor {
                 log.info("Exit chatroom. memberIdx : {}, chatRoomId : {}", memberIdx, chatRoomId);
                 if (chatRoomId == null) {
                     log.error("Stomp Handler : 채팅방을 찾는데 실패하였습니다. memberIdx : {}", memberIdx);
-                    throw new ErrorHandler(ErrorStatus.CHAT_ROOM_NOT_FOUND);
+                    throw new MessageDeliveryException(ErrorStatus.CHAT_ROOM_NOT_FOUND.getMessage());
                 }
 
                 // 채팅방 퇴장 정보 저장
