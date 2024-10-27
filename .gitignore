@@ -36,11 +36,8 @@ out/
 ### VS Code ###
 .vscode/
 
-*.yml
-application-aws.yml
-application-jwt.yml
-application-oauth.yml
-SecurityConfig.java
-Wallet_RideTogetherDB.zip
+application.yml
+application-*.yml
+docker-compose.yml
 
 .DS_STORE
