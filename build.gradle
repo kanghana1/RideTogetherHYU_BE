@@ -83,10 +83,3 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-
-
-// FOR @ConfigurationProperties
-tasks.named('compileJava') {
-	inputs.files(tasks.named('processResources'))
-}

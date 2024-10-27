@@ -1,6 +1,7 @@
 package com.ridetogether.server.global.config;
 
-import com.ridetogether.server.domain.chat.application.StompHandler;
+import com.ridetogether.server.domain.chat.handler.StompErrorHandler;
+import com.ridetogether.server.domain.chat.handler.StompHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -15,6 +16,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final StompHandler stompHandler;
+    private final StompErrorHandler stompErrorHandler;
 
     // sockJS Fallback을 이용해 노출할 endpoint 설정
     @Override
@@ -23,6 +25,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns("*");
 //                .withSockJS();
+        registry.setErrorHandler(stompErrorHandler);
 
     }
 

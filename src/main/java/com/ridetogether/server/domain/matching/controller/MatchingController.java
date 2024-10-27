@@ -38,4 +38,11 @@ public class MatchingController {
         return ApiResponse.onSuccess(matchingService.getMatchingInfo(matchingIdx));
     }
 
+    @DeleteMapping("/join")
+    public ApiResponse<?> cancelJoinMatching(@RequestParam(value = "matchingIdx") Long matchingIdx) {
+        Member loginMember = SecurityUtil.getLoginMember()
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        return ApiResponse.onSuccess(matchingService.cancelJoinMatching(matchingIdx, loginMember.getIdx()));
+    }
+
 }
