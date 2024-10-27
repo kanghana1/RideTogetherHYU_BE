@@ -85,6 +85,6 @@ jobs:
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
             cd ~
-            sudo bash deploy.sh
+            sudo docker compose up -d app
             sudo docker image prune -f
           
