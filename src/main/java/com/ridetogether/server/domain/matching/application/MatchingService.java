@@ -84,8 +84,8 @@ public class MatchingService {
                 .build();
         memberMatchingRepository.save(memberMatching);
 
-        member.getMemberMatching().add(memberMatching);
-        matching.getMemberMatching().add(memberMatching);
+//        member.getMemberMatching().add(memberMatching);
+//        matching.getMemberMatching().add(memberMatching);
 
         matching.plusParticipantCount();
 
@@ -124,6 +124,18 @@ public class MatchingService {
                 .chatRoomIdx(chatRoomIdx)
                 .expiredAt(matching.getExpiredAt().toString())
                 .build();
+    }
+
+    public String cancelJoinMatching(Long matchingIdx, Long memberIdx) {
+//        Matching matching = matchingRepository.findByIdx(matchingIdx)
+//                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MATCHING_NOT_FOUND));
+//        Member member = memberRepository.findByIdx(memberIdx)
+//                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+//        MemberMatching memberMatching = memberMatchingRepository.findByMemberAndMatching(member, matching)
+//                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_MATCHING_NOT_FOUND));
+//        memberMatchingRepository.delete(memberMatching);
+//        matching.minusParticipantCount();
+        return "success";
     }
 
 

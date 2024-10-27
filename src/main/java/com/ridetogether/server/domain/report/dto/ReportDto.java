@@ -2,6 +2,7 @@ package com.ridetogether.server.domain.report.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ridetogether.server.domain.image.domain.Image;
+import com.ridetogether.server.domain.matching.domain.Matching;
 import com.ridetogether.server.domain.member.domain.Member;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -20,10 +21,10 @@ public class ReportDto {
     @Builder
     public static class ReportSaveDto {
         private Member reporter;
-        private Member reported;
+        private String reportedMemberId;
         private String reportTitle;
         private String reportContent;
-//        private Post reportMatching;
+        private Matching reportMatching;
         private List<Image> images;
     }
 }
