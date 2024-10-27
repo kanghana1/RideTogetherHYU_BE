@@ -51,7 +51,7 @@ public class SecurityConfig {
 //				.requestMatchers(toH2Console())
 				.requestMatchers("/fcm", "/static/**", "/h2-console/**",
 						"/favicon.ico", "/error", "/swagger-ui/**",
-						"/swagger-resources/**", "/v3/api-docs/**", "/**")
+						"/swagger-resources/**", "/v3/api-docs/**")
 		);
 	}
 
