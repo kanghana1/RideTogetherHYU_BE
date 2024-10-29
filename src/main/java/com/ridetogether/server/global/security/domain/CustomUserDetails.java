@@ -1,14 +1,14 @@
 package com.ridetogether.server.global.security.domain;
 
 import com.ridetogether.server.domain.member.domain.Member;
+import com.ridetogether.server.global.oauth2.model.SocialType;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.FetchType;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 import lombok.Builder;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;

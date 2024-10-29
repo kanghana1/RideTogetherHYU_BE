@@ -12,6 +12,7 @@ import com.ridetogether.server.domain.member.model.StudentStatus;
 import com.ridetogether.server.domain.member.model.Role;
 import com.ridetogether.server.domain.report.domain.Report;
 import com.ridetogether.server.global.common.BaseTimeEntity;
+import com.ridetogether.server.global.oauth2.model.SocialType;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class Member extends BaseTimeEntity {
 	@Column(nullable = false, unique = true)
 	private String email;
 
-	@Column(nullable = false)
+	@Column(nullable = false)   // 잠시만 건들게요 ㅠ ㅠ
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
@@ -84,6 +85,9 @@ public class Member extends BaseTimeEntity {
 	@JsonIgnore
 	private List<Report> reports;
 
+	// 소셜로그인 종류 추가
+	@Enumerated(EnumType.STRING)
+	private SocialType socialType;
 
 	@OneToMany(mappedBy = "member")
 	@JsonIgnore
@@ -137,4 +141,5 @@ public class Member extends BaseTimeEntity {
 	public void updateRole(Role role) {
 		this.role = role;
 	}
+
 }
