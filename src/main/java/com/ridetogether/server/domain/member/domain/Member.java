@@ -50,7 +50,7 @@ public class Member extends BaseTimeEntity {
 	@Column(nullable = false, unique = true)
 	private String email;
 
-//	@Column(nullable = false)   // 잠시만 건들게요 ㅠ ㅠ
+	@Column(nullable = false)   // 잠시만 건들게요 ㅠ ㅠ
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
