@@ -43,9 +43,15 @@ public class MatchingController {
 
     @DeleteMapping("/join")
     public ApiResponse<?> cancelJoinMatching(@RequestParam(value = "matchingIdx") Long matchingIdx) {
-        Member loginMember = SecurityUtil.getLoginMember()
-                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        String memberId = SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member loginMember = memberService.findByMemberId(memberId);
         return ApiResponse.onSuccess(matchingService.cancelJoinMatching(matchingIdx, loginMember.getIdx()));
+    }
+
+    @PostMapping("/cost")
+    public ApiResponse<?> enterTaxiPrice(@RequestParam(value = "matchingIdx") Long matchingIdx,
+                                         @RequestBody UpdatePriceRequestDto request) {
+        return ApiResponse.onSuccess(matchingService.enterTaxiPrice(matchingIdx, request.getPrice()));
     }
 
 }
