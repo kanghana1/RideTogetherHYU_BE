@@ -1,16 +1,15 @@
-package com.ridetogether.server.domain.matching.application;
+package com.ridetogether.server.domain.matchingroom.application;
 
 import com.ridetogether.server.domain.chatroom.dao.ChatRoomRepository;
 import com.ridetogether.server.domain.chatroom.domain.ChatRoom;
-import com.ridetogether.server.domain.matching.dao.MatchingRepository;
-import com.ridetogether.server.domain.matching.dao.MemberMatchingRepository;
-import com.ridetogether.server.domain.matching.domain.Matching;
-import com.ridetogether.server.domain.matching.domain.MemberMatching;
-import com.ridetogether.server.domain.matching.dto.MatchingDto.CreateMatchingDto;
-import com.ridetogether.server.domain.matching.dto.MatchingResponseDto;
-import com.ridetogether.server.domain.matching.dto.MatchingResponseDto.CreateMatchingResponseDto;
-import com.ridetogether.server.domain.matching.dto.MatchingResponseDto.JoinMatchingResponseDto;
-import com.ridetogether.server.domain.matching.dto.MatchingResponseDto.MatchingInfoResponseDto;
+import com.ridetogether.server.domain.matchingroom.dao.MatchingRepository;
+import com.ridetogether.server.domain.matchingroom.dao.MemberMatchingRepository;
+import com.ridetogether.server.domain.matchingroom.domain.Matching;
+import com.ridetogether.server.domain.matchingroom.domain.MemberMatching;
+import com.ridetogether.server.domain.matchingroom.dto.MatchingDto.CreateMatchingDto;
+import com.ridetogether.server.domain.matchingroom.dto.MatchingResponseDto.CreateMatchingResponseDto;
+import com.ridetogether.server.domain.matchingroom.dto.MatchingResponseDto.JoinMatchingResponseDto;
+import com.ridetogether.server.domain.matchingroom.dto.MatchingResponseDto.MatchingInfoResponseDto;
 import com.ridetogether.server.domain.member.dao.MemberRepository;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.domain.member.model.PayType;
@@ -20,8 +19,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @Transactional

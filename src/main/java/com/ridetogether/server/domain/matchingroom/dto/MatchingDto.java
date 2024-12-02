@@ -1,4 +1,4 @@
-package com.ridetogether.server.domain.matching.dto;
+package com.ridetogether.server.domain.matchingroom.dto;
 
 import com.ridetogether.server.domain.member.model.Gender;
 import com.ridetogether.server.domain.member.model.PayType;

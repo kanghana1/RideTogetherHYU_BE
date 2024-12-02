@@ -3,7 +3,7 @@ package com.ridetogether.server.domain.chatroom.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ridetogether.server.domain.chat.domain.ChatMessage;
 import com.ridetogether.server.domain.chat.model.ChatStatus;
-import com.ridetogether.server.domain.matching.domain.Matching;
+import com.ridetogether.server.domain.matchingroom.domain.Matching;
 import com.ridetogether.server.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,9 +11,7 @@ import lombok.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Entity

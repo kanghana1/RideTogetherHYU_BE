@@ -1,7 +1,7 @@
-package com.ridetogether.server.domain.matching.converter;
+package com.ridetogether.server.domain.matchingroom.converter;
 
-import com.ridetogether.server.domain.matching.dto.MatchingDto.CreateMatchingDto;
-import com.ridetogether.server.domain.matching.dto.MatchingRequestDto.CreateMatchingRequestDto;
+import com.ridetogether.server.domain.matchingroom.dto.MatchingDto.CreateMatchingDto;
+import com.ridetogether.server.domain.matchingroom.dto.MatchingRequestDto.CreateMatchingRequestDto;
 import com.ridetogether.server.domain.member.model.Gender;
 import com.ridetogether.server.domain.member.model.PayType;
 

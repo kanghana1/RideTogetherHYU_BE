@@ -1,7 +1,5 @@
-package com.ridetogether.server.domain.matching.dto;
+package com.ridetogether.server.domain.matchingroom.dto;
 
-import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
-import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
 import lombok.Builder;
 import lombok.Data;
 

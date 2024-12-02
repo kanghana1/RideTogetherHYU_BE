@@ -1,8 +1,8 @@
-package com.ridetogether.server.domain.matching.domain;
+package com.ridetogether.server.domain.matchingroom.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ridetogether.server.domain.chatroom.domain.ChatRoom;
-import com.ridetogether.server.domain.matching.model.MatchingStatus;
+import com.ridetogether.server.domain.matchingroom.model.MatchingStatus;
 import com.ridetogether.server.domain.member.model.Gender;
 import com.ridetogether.server.domain.member.model.PayType;
 import com.ridetogether.server.global.common.BaseTimeEntity;

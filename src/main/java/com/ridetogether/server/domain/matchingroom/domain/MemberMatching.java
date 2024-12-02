@@ -1,4 +1,4 @@
-package com.ridetogether.server.domain.matching.domain;
+package com.ridetogether.server.domain.matchingroom.domain;
 
 import com.ridetogether.server.domain.member.domain.Member;
 import jakarta.persistence.*;
