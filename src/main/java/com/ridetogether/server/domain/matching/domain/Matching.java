@@ -1,8 +1,8 @@
-package com.ridetogether.server.domain.matchingroom.domain;
+package com.ridetogether.server.domain.matching.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ridetogether.server.domain.chatroom.domain.ChatRoom;
-import com.ridetogether.server.domain.matchingroom.model.MatchingStatus;
+import com.ridetogether.server.domain.matching.model.MatchingStatus;
 import com.ridetogether.server.domain.member.model.Gender;
 import com.ridetogether.server.domain.member.model.PayType;
 import com.ridetogether.server.global.common.BaseTimeEntity;
@@ -38,7 +38,9 @@ public class Matching extends BaseTimeEntity implements Serializable {
 
     private String ridingTime;
 
-    private int participantCount;
+//    private int participantCount;
+
+    private int maxParticipantCount;
 
     private String departure;
 
@@ -66,6 +68,7 @@ public class Matching extends BaseTimeEntity implements Serializable {
     @Builder.Default
     private List<MemberMatching> memberMatching = new ArrayList<>();
 
+
     public void addMemberMatching(MemberMatching memberMatching) {
         this.memberMatching.add(memberMatching);
     }
@@ -77,12 +80,12 @@ public class Matching extends BaseTimeEntity implements Serializable {
         this.price = price;
     }
 
-    public void plusParticipantCount() {
-        this.participantCount++;
-    }
-
-    public void minusParticipantCount() {
-        this.participantCount--;
-    }
+//    public void plusParticipantCount() {
+//        this.participantCount++;
+//    }
+//
+//    public void minusParticipantCount() {
+//        this.participantCount--;
+//    }
 
 }

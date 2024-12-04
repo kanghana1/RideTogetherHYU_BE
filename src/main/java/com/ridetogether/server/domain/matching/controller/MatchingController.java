@@ -1,7 +1,7 @@
-package com.ridetogether.server.domain.matchingroom.controller;
+package com.ridetogether.server.domain.matching.controller;
 
-import com.ridetogether.server.domain.matchingroom.application.MatchingService;
-import com.ridetogether.server.domain.matchingroom.converter.MatchingDtoConverter;
+import com.ridetogether.server.domain.matching.application.MatchingService;
+import com.ridetogether.server.domain.matching.converter.MatchingDtoConverter;
 import com.ridetogether.server.domain.member.application.MemberService;
 import com.ridetogether.server.domain.member.domain.Member;
 import com.ridetogether.server.global.apiPayload.ApiResponse;
@@ -11,7 +11,7 @@ import com.ridetogether.server.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import static com.ridetogether.server.domain.matchingroom.dto.MatchingRequestDto.*;
+import static com.ridetogether.server.domain.matching.dto.MatchingRequestDto.*;
 
 @RequiredArgsConstructor
 @RestController

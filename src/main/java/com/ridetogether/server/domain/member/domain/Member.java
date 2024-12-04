@@ -2,7 +2,7 @@ package com.ridetogether.server.domain.member.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ridetogether.server.domain.image.domain.Image;
-import com.ridetogether.server.domain.matchingroom.domain.MemberMatching;
+import com.ridetogether.server.domain.matching.domain.MemberMatching;
 import com.ridetogether.server.domain.member.dto.MemberDto.MemberUpdateDto;
 import com.ridetogether.server.domain.member.model.ActiveState;
 import com.ridetogether.server.domain.member.model.Bank;

@@ -1,6 +1,6 @@
-package com.ridetogether.server.domain.matchingroom.dao;
+package com.ridetogether.server.domain.matching.dao;
 
-import com.ridetogether.server.domain.matchingroom.domain.Matching;
+import com.ridetogether.server.domain.matching.domain.Matching;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,7 +1,7 @@
 package com.ridetogether.server.domain.chatroom.dao;
 
 import com.ridetogether.server.domain.chatroom.domain.ChatRoom;
-import com.ridetogether.server.domain.matchingroom.dao.MatchingRepository;
+import com.ridetogether.server.domain.matching.dao.MatchingRepository;
 import com.ridetogether.server.global.apiPayload.code.status.ErrorStatus;
 import com.ridetogether.server.global.apiPayload.exception.handler.ErrorHandler;
 import jakarta.annotation.PostConstruct;

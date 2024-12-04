@@ -1,7 +1,7 @@
 package com.ridetogether.server.domain.report.dto;
 
 import com.ridetogether.server.domain.image.domain.Image;
-import com.ridetogether.server.domain.matchingroom.domain.Matching;
+import com.ridetogether.server.domain.matching.domain.Matching;
 import com.ridetogether.server.domain.member.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

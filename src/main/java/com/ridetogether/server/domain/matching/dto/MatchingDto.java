@@ -1,4 +1,4 @@
-package com.ridetogether.server.domain.matchingroom.dto;
+package com.ridetogether.server.domain.matching.dto;
 
 import com.ridetogether.server.domain.member.model.Gender;
 import com.ridetogether.server.domain.member.model.PayType;
@@ -18,6 +18,7 @@ public class MatchingDto {
         private String ridingTime;
         private String departure;
         private String destination;
+        private Integer maxParticipantCnt;
         private Gender matchingGender;
         private List<PayType> payTypes;
         private LocalDate expiredAt;
