@@ -31,8 +31,6 @@ public class MatchingService {
     private final MemberMatchingRepository memberMatchingRepository;
     private final ChatRoomRepository chatRoomRepository;
 
-    private static final int MAX_PARTICIPANT_COUNT = 4;
-
     public CreateMatchingResponseDto createMatching(CreateMatchingDto dto) {
         Member member = memberRepository.findByIdx(dto.getHostMemberIdx())
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
