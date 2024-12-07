@@ -143,4 +143,9 @@ public class MatchingService {
         matching.updatePrice(price);
         return "success";
     }
+
+    public Matching findByIdx(Long matchingIdx) {
+        return matchingRepository.findByIdx(matchingIdx)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MATCHING_NOT_FOUND));
+    }
 }
