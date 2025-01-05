@@ -92,11 +92,6 @@ public class SecurityConfig {
 
 	@Bean
 	public static PasswordEncoder passwordEncoder() {
-		/*
-		DelegatingPasswordEncoder delegatingPasswordEncoder = (DelegatingPasswordEncoder) PasswordEncoderFactories.createDelegatingPasswordEncoder();
-		delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new BCryptPasswordEncoder());
-		return delegatingPasswordEncoder;
-		*/
 		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
 	}
 
