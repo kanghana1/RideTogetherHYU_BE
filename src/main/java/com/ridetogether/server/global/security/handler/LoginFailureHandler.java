@@ -26,10 +26,13 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 			response.setStatus(ErrorStatus.MEMBER_LOGIN_NOT_SUPPORT.getHttpStatus().value());
 			response.getWriter().write(objectMapper.writeValueAsString(ApiResponse.onFailure(ErrorStatus.MEMBER_LOGIN_NOT_SUPPORT.getCode(),
 					ErrorStatus.MEMBER_LOGIN_NOT_SUPPORT.getMessage(), exception.getMessage())));
+
 		} else {
 			response.setStatus(ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getHttpStatus().value());
 			response.getWriter().write(objectMapper.writeValueAsString(ApiResponse.onFailure(ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getCode(),
 					ErrorStatus.MEMBER_EMAIL_PASSWORD_NOT_MATCH.getMessage(), exception.getMessage())));
+
+			log.info("else");
 		}
 		log.info("Authentication failed: " + exception.getMessage());
 	}
